@@ -1,0 +1,5 @@
+xenv.py
+!migrations/env.py
+*.pyc
+*.swp
+venv/
