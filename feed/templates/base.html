@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" href="/static/dist/vendor.css">
+	<link rel="stylesheet" href="/static/dist/app.css">
+</head>
+<body>
+	{% block content %}
+	{% endblock %}
+	
+	<script src="/static/dist/vendor.js"></script>
+	<script src="/static/dist/app.js"></script>
+	
+	{% block script %}
+	{% endblock %}
+</body>
+</html>

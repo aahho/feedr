@@ -3,3 +3,5 @@ xenv.py
 *.pyc
 *.swp
 venv/
+static/dist/
+node_modules/

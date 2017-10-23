@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<div class="col text-center">
+				<h1>
+					FEEDR.
+				</h1>
+			</div>
+		</div>
+
+		<form action="/feed" method=POST name="new-feed">
+			<div class="row">
+				<div class="col">
+					<input type="url" id="inputUrl" class="form-control form-control-lg" name="url" placeholder="Enter Feed URL" required autofocus>
+				</div>
+			</div>
+			<br>
+			<div class="row">	
+				<div class="col">
+					<div class="form-check form-check-inline">
+					  <label class="form-check-label">
+					    <input class="form-check-input" type="checkbox" value="travel" name="tags"> Travel
+					  </label>
+					</div>
+					<div class="form-check form-check-inline">
+					  <label class="form-check-label">
+					    <input class="form-check-input" type="checkbox" value="photography" name="tags"> Photography
+					  </label>
+					</div>
+					<div class="form-check form-check-inline">
+					  <label class="form-check-label">
+					    <input class="form-check-input" type="checkbox" value="bitcoin" name="tags"> Bitcoin
+					  </label>
+					</div>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col text-center">
+					<button class="btn btn-lg btn-primary">Fetch</button>
+				</div>
+			</div>
+		</form>
+
+		{% if feed %}
+			<div class="row">
+				<div class="col">
+					<h4>{{ feed.feed.title }}</h4>
+				</div>
+			</div>
+			<div class="card-columns">
+			{% for entry in feed.entries %}
+				<div class="card">
+				  <div class="card-body">
+				    <h6 class="card-title"><b>{{ entry.title }}</b></h6>
+				    <p class="card-text feed-body">{{ entry.content[0].value|safe }}</p>
+				  </div>
+				</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+
+	</div>	
+  
+  <br>
+
+
+	
+{% endblock %}
+
+{% block script %}
+	<script>
+		$(".category-select").select2();
+</script>
+{% endblock %}

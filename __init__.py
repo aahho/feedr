@@ -16,7 +16,6 @@ from feed.routes import feed
 app.register_blueprint(base)
 app.register_blueprint(feed)
 
-
 # custome handler
 @app.errorhandler(FeedrException)
 def handle_invalid_usage(error):
