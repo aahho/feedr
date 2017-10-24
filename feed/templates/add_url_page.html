@@ -8,7 +8,6 @@
 				</h1>
 			</div>
 		</div>
-
 		<form action="/feed" method=POST name="new-feed">
 			<div class="row">
 				<div class="col">
@@ -36,6 +35,13 @@
 				</div>
 			</div>
 			<br>
+			{% if error %}
+				<div class="row alert alert-danger">
+					<div class="col text-center">
+						{{error.error}}
+					</div>
+				</div>
+			{% endif %}
 			<div class="row">
 				<div class="col text-center">
 					<button class="btn btn-lg btn-primary">Fetch</button>

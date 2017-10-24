@@ -54,4 +54,4 @@ def index():
 		# return "Done"
 		return render_template('add_url_page.html', feed = feed)
 
-	return FeedController.store()
+	return render_template('add_url_page.html')
