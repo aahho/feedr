@@ -13,8 +13,11 @@ def index():
 	if request.method == 'POST':
 		feed_url = request.form.get('url')
 		tags = request.form.getlist('tags')
+		return FeedController.store(feed_url, tags)
 		feed = feedparser.parse(feed_url)
 
+		if len(feed.entries) <= 0:
+			pass
 		if len(feed.entries) > 0:
 			# save to db
 			title = feed.feed.title
