@@ -2,6 +2,11 @@ from flask import Flask
 from __init__ import db
 from sqlalchemy.sql import func
 
+feed_article_category_table = db.Table('feed_category', db.Model.metadata,
+    db.Column('feed_id', db.Integer, db.ForeignKey('feeds.id')),
+    db.Column('categories', db.Integer, db.ForeignKey('categories.id'))
+)
+
 class Feed(db.Model):
     __tablename__= 'feeds'
 
@@ -13,10 +18,10 @@ class Feed(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
 
-feed_article_category_table = db.Table('feed_article_category', db.Model.metadata,
-    db.Column('feed_article_id', db.Integer, db.ForeignKey('feed_articles.id')),
-    db.Column('categories', db.Integer, db.ForeignKey('categories.id'))
-)
+    categories = db.relationship(
+        "Category",
+        secondary=feed_article_category_table,
+        back_populates="feeds")
 
 class FeedArticle(db.Model):
     __tablename__= 'feed_articles'
@@ -30,6 +35,7 @@ class FeedArticle(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
 
+
 class Category(db.Model):
     __tablename__= 'categories'
 
@@ -39,3 +45,7 @@ class Category(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
 
+    feeds = db.relationship(
+        "Feed",
+        secondary=feed_article_category_table,
+        back_populates="categories")

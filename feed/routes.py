@@ -16,8 +16,6 @@ def index():
 		return FeedController.store(feed_url, tags)
 		feed = feedparser.parse(feed_url)
 
-		if len(feed.entries) <= 0:
-			pass
 		if len(feed.entries) > 0:
 			# save to db
 			title = feed.feed.title
@@ -34,6 +32,8 @@ def index():
 			)
 			db.session.add(newFeed)
 			db.session.commit()
+
+			
 
 			for entry in feed.entries:
 				title = entry.title
@@ -53,5 +53,5 @@ def index():
 
 		# return "Done"
 		return render_template('add_url_page.html', feed = feed)
-
-	return FeedController.store()
+		
+	return render_template('add_url_page.html')

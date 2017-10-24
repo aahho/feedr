@@ -5,4 +5,6 @@ Flask-Migrate==2.0.4
 Flask-SQLAlchemy==2.2
 requests==2.4.2
 feedparser==5.2.1
-psycopg2
+psycopg2==2.7.3.1
+python-slugify=1.2.4
+feedfinder2==0.0.4
