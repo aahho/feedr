@@ -54,7 +54,7 @@
 				<div class="card">
 				  <div class="card-body">
 				    <h6 class="card-title"><b>{{ entry.title }}</b></h6>
-				    <p class="card-text feed-body">{{ entry.content[0].value|safe }}</p>
+				    <p class="card-text feed-body">{{ entry.summary|safe }}</p>
 				  </div>
 				</div>
 			{% endfor %}
@@ -70,7 +70,4 @@
 {% endblock %}
 
 {% block script %}
-	<script>
-		$(".category-select").select2();
-</script>
 {% endblock %}
