@@ -4,7 +4,6 @@ import feedparser
 from models import *
 from slugify import slugify
 
-
 def store(url, tags):
 	url = url.strip()
 	feed = feedparser.parse(url)

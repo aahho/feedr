@@ -10,9 +10,11 @@ db = SQLAlchemy(app)
 
 from Http.routes import base
 from feed.routes import feed
+from worker.routes import worker
 
 app.register_blueprint(base)
 app.register_blueprint(feed)
+app.register_blueprint(worker)
 
 # custome handler
 @app.errorhandler(FeedrException)

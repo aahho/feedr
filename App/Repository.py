@@ -25,6 +25,11 @@ def update(modelName, filterKeys, updateWith):
 def fetchAll(modelName):
     return modelName.query.all()
 
+def fetchSelect(modelName, select_params):
+	from sqlalchemy.orm import load_only
+	# return modelName.query.options(load_only(select_params)).all()
+	return modelName.query.options(load_only(*select_params)).all()
+
 def store(modelName, values):
 	modelInstance = modelName(**values)
 	session.add(modelInstance)
