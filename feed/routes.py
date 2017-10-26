@@ -25,7 +25,7 @@ def filter():
 
 @feed.route('/feeds/articles/<id>', methods = ['GET'])
 def get_artical(id):
-	response = get_article_details(id)
+	response = get_article_data(id)
 	if response:
 		return respondWithItem(response)
 	return respondWithError('Not Found')

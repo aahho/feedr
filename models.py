@@ -58,6 +58,7 @@ class FeedArticle(db.Model):
             'summary' : self.summary,
             'sentiment' : self.sentiment,
             'feedId' : self.feed_id,
+            'shareCount' : self.share_count,
             'details' : self.article_details.transform() if self.article_details != None else None
         }
 

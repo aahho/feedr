@@ -12,13 +12,13 @@ def filter_feed(data):
 	feedArticleRepo = FeedArticleRepository()
 	if 'keywords' in data:
 		filterKeys = {
-			'keywords' : data['keywords']
+			'keywords' : data['keywords'],
 		}
 	else : 
 		filterKeys = {}
-	return feedArticleRepo.filter(filterKeys, data['item'], data['page'])
+	return feedArticleRepo.filter(filterKeys, data['item'] if 'item' in data else 10, data['page'] if 'page' in data else 1)
 
-def get_article_details(id):
+def get_article_data(id):
 	feedArticleRepo = FeedArticleRepository()
 	return feedArticleRepo.get_by_id(id)
 
