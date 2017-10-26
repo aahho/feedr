@@ -3,6 +3,9 @@ from feedfinder2 import find_feeds
 import feedparser
 from models import *
 from slugify import slugify
+from feedRankLib.Article import Article
+import thread
+from app import app
 
 def store(url, tags):
 	url = url.strip()
@@ -56,14 +59,16 @@ def store(url, tags):
 			db.session.commit()
 		else:
 			newFeed = existing_url
-			FeedArticle.query.filter_by(feed_id=newFeed.id).delete()
 			db.session.commit()
+
+		links = [entry.link for entry in feed.entries]
+		FeedArticle.query.filter(FeedArticle.url.notin_(links)).filter(FeedArticle.feed_id == newFeed.id).delete(synchronize_session=False)
 
 		for entry in feed.entries:
 			title = entry.title
 			url = entry.link
 			content = entry.summary
-			author = entry.author if 'author' in entry else ''
+			author = entry.author if 'author' in entry else None
 
 			newFeedArticle = FeedArticle(
 				title=title,
@@ -74,4 +79,37 @@ def store(url, tags):
 			)
 			db.session.add(newFeedArticle)
 			db.session.commit()
+
+			thread.start_new_thread(get_article_details, (newFeedArticle.id, url))
 	return render_template('add_url_page.html', feed = feed)
+
+def get_article_details(id, url):
+	with app.app_context():
+		articleDetails = Article(url)
+		try:
+			meta = articleDetails.build_article_meta()
+		except:
+			print "here"
+			FeedArticle.query.filter(FeedArticle.id == id).delete(synchronize_session=False)
+			return
+		# print meta
+
+		article = FeedArticle.query.filter_by(id=id).first()
+
+		article.rank = meta['rank'], 
+		article.share_count = meta['share_count'], 
+		article.keywords = meta['keywords'], 
+		article.image = meta['image'], 
+		article.summary = meta['summary'], 
+		article.sentiment = meta['sentiment'], 
+
+		newFeedArticleDetail = FeedArticleDetail(
+			title=meta['title'],
+			content=meta['content'],
+			feed_article_id=article.id
+		)
+		db.session.add(newFeedArticleDetail)
+		db.session.commit()
+
+	print "Done"
+

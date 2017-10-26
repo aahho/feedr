@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 0e80ab7f80a5
+Revision ID: bfa2daa184d2
 Revises: 
-Create Date: 2017-10-26 14:53:08.348288
+Create Date: 2017-10-26 15:38:00.417077
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '0e80ab7f80a5'
+revision = 'bfa2daa184d2'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -41,6 +41,7 @@ def upgrade():
     sa.Column('title', sa.Text(), nullable=True),
     sa.Column('url', sa.Text(), nullable=True),
     sa.Column('content', sa.Text(), nullable=True),
+    sa.Column('author', sa.String(length=255), nullable=True),
     sa.Column('rank', sa.Integer(), nullable=True),
     sa.Column('keywords', sa.Text(), nullable=True),
     sa.Column('image', sa.Text(), nullable=True),
@@ -66,8 +67,7 @@ def upgrade():
     sa.Column('country_code', sa.String(length=255), nullable=True),
     sa.Column('country_name', sa.String(length=255), nullable=True),
     sa.Column('country_rank', sa.Integer(), nullable=True),
-    sa.Column('author', postgresql.ARRAY(sa.Text()), nullable=False),
-    sa.Column('movie', postgresql.ARRAY(sa.Text()), nullable=False),
+    sa.Column('movie', postgresql.ARRAY(sa.Text()), nullable=True),
     sa.Column('feed_article_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text(u'now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
