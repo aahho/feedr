@@ -53,7 +53,7 @@ class FeedArticle(db.Model):
             'url' : self.url,
             'rank' : self.rank,
             'image' : self.image,
-            'keywords' : self.keywords.split(','),
+            'keywords' : self.keywords.split(',') if self.keywords is not None else [],
             'updatedAt' : self.updated_at
         }
 
@@ -64,7 +64,7 @@ class FeedArticle(db.Model):
             'url' : self.url,
             'content' : self.content,
             'rank' : self.rank,
-            'keywords' : self.keywords.split(','),
+            'keywords' : self.keywords.split(',') if self.keywords is not None else [],
             'image' : self.image,
             'summary' : self.summary,
             'sentiment' : self.sentiment,
