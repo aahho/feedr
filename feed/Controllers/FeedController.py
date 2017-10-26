@@ -3,6 +3,21 @@ from feedfinder2 import find_feeds
 import feedparser
 from models import *
 from slugify import slugify
+from feed.FeedRepository import FeedArticleRepository
+
+def filter_feed(data):
+	feedArticleRepo = FeedArticleRepository()
+	if 'keywords' in data:
+		filterKeys = {
+			'keywords' : data['keywords']
+		}
+	else : 
+		filterKeys = {}
+	return feedArticleRepo.filter(filterKeys, data['item'], data['page'])
+
+def get_article_details(id):
+	feedArticleRepo = FeedArticleRepository()
+	return feedArticleRepo.get_by_id(id)
 
 def store(url, tags):
 	url = url.strip()
@@ -63,13 +78,11 @@ def store(url, tags):
 			title = entry.title
 			url = entry.link
 			content = entry.summary
-			author = entry.author if 'author' in entry else ''
 
 			newFeedArticle = FeedArticle(
 				title=title,
 				url=url,
 				content=content,
-				author=author,
 				feed_id=newFeed.id
 			)
 			db.session.add(newFeedArticle)

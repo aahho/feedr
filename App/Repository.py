@@ -7,7 +7,10 @@ from sqlalchemy import create_engine
 session = session.Session(bind=create_engine(env.SQLALCHEMY_DATABASE_URI))
 
 def filterByAttribute(modelName, filterKeys):
-    return modelName.query.get(**filterKeys)
+    return modelName.query.get(filterKeys)
+
+def filterByAttributePaginated(modelName, filterKeys, item=25, page=1, sortBy='created_at', order='desc'):
+	return modelName.query.filter_by(**filterKeys).order_by(getattr(getattr(modelName, sortBy), order)()).paginate(page=int(page), per_page=int(item), error_out=False)
 
 def authenticate(modelName, access_token):
     return modelName.query.filter(access_token=access_token, expires_at__gte=datetime.datetime.now())
