@@ -32,6 +32,11 @@ class FeedArticle(db.Model):
     url = db.Column(db.Text)
     content = db.Column(db.Text)
     author = db.Column(db.String(70))
+    rank = db.Column(db.Integer)
+    keywords = db.Column(db.Text)
+    image = db.Column(db.Text)
+    summary = db.Column(db.Text)
+    sentiment = db.Column(db.SmallInteger)
     feed_id = db.Column(db.ForeignKey(u'feeds.id', ondelete=u'CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
@@ -62,22 +67,19 @@ class Category(db.Model):
 
 class FeedArticleDetail(db.Model):
     """docstring for FeedArticalDetail"""
-    __tablename__= 'feed_article_Details'
+    __tablename__= 'feed_article_details'
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
     rank = db.Column(db.Integer)
-    keyword = db.Column(db.Text)
     content = db.Column(db.Text)
-    summary = db.Column(db.Text)
-    top_image = db.Column(db.Text)
-    sentiment = db.Column(db.String(255))
     rich_rank = db.Column(db.Integer)
     country_code = db.Column(db.String(255))
     country_name = db.Column(db.String(255))
     country_rank = db.Column(db.Integer)
     author = db.Column(ARRAY(db.Text), nullable=False, default=db.cast(array([], type_=db.Text), ARRAY(db.Text)))
     feed_id = db.Column(db.ForeignKey(u'feeds.id', ondelete=u'CASCADE'), nullable=False)
+    feed_article_id = db.Column(db.ForeignKey(u'feed_articles.id', ondelete=u'CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
         
