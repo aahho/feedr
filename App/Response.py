@@ -1,9 +1,9 @@
 from flask import Flask, json
 from helpers import url_for_other_page
 
-def respondWithItem(data, statusCode = 200, message = 'Success', hint=''):
+def respondWithItem(data, transformer='transform', statusCode=200, message = 'Success', hint=''):
 	response = dict(())
-	response['data'] = data.transform()
+	response['data'] = getattr(data, transformer)()
 	response['code'] = statusCode
 	response['notification'] = {
 		'feedCode' : 'SE_'+str(statusCode),
@@ -14,11 +14,11 @@ def respondWithItem(data, statusCode = 200, message = 'Success', hint=''):
 	response['version'] = 1
 	return json.jsonify(response)
 
-def respondWithPaginatedCollection(data, statusCode = 200, message = 'Success', hint=''):
+def respondWithPaginatedCollection(data, transformer='transform', statusCode = 200, message = 'Success', hint=''):
 	response_data = []
 	response = dict(())
 	for item in data.items:
-		response_data.append(item.transform()) 
+		response_data.append(getattr(item, transformer)()) 
 	response['data'] = response_data
 	response['code'] = statusCode
 	response['meta'] = {

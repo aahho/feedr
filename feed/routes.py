@@ -21,7 +21,7 @@ def index():
 def filter():
 	data = request.args
 	response = filter_feed(data)
-	return respondWithPaginatedCollection(response)
+	return respondWithPaginatedCollection(response, 'mini_transformer')
 
 @feed.route('/feeds/articles/<id>', methods = ['GET'])
 def get_artical(id):

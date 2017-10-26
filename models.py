@@ -46,6 +46,17 @@ class FeedArticle(db.Model):
 
     article_details = relationship(u'FeedArticleDetail', uselist=False, back_populates="feed_article")
 
+    def mini_transformer(self):
+        return {
+            'id' : self.id,
+            'title' : self.title,
+            'url' : self.url,
+            'rank' : self.rank,
+            'image' : self.image,
+            'keywords' : self.keywords.split(','),
+            'updatedAt' : self.updated_at
+        }
+
     def transform(self):
         return {
             'id' : self.id,
@@ -53,13 +64,14 @@ class FeedArticle(db.Model):
             'url' : self.url,
             'content' : self.content,
             'rank' : self.rank,
-            'keywords' : self.keywords,
+            'keywords' : self.keywords.split(','),
             'image' : self.image,
             'summary' : self.summary,
             'sentiment' : self.sentiment,
             'feedId' : self.feed_id,
             'shareCount' : self.share_count,
-            'details' : self.article_details.transform() if self.article_details != None else None
+            'details' : self.article_details.transform() if self.article_details != None else None,
+            'updatedAt' : self.updated_at
         }
 
 class Category(db.Model):
