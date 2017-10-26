@@ -1,6 +1,7 @@
 from flask import Flask
 from __init__ import db
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import ARRAY, array
 
 feed_article_category_table = db.Table('feed_category', db.Model.metadata,
@@ -43,14 +44,21 @@ class FeedArticle(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
 
+    article_details = relationship(u'FeedArticleDetail', uselist=False, back_populates="feed_article")
+
     def transform(self):
         return {
             'id' : self.id,
             'title' : self.title,
             'url' : self.url,
             'content' : self.content,
-            'author' : self.author,
-            'feed_id' : self.feed_id
+            'rank' : self.rank,
+            'keywords' : self.keywords,
+            'image' : self.image,
+            'summary' : self.summary,
+            'sentiment' : self.sentiment,
+            'feedId' : self.feed_id,
+            'details' : self.article_details.transform() if self.article_details != None else None
         }
 
 class Category(db.Model):
@@ -82,4 +90,17 @@ class FeedArticleDetail(db.Model):
     feed_article_id = db.Column(db.ForeignKey(u'feed_articles.id', ondelete=u'CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
-        
+
+    feed_article = relationship("FeedArticle", back_populates="article_details")
+    
+    def transform(self):
+        return {
+            'id' : self.id,
+            'title' : self.title,
+            'content' : self.content,
+            'rich_rank' : self.rich_rank,
+            'countryCode' : self.country_code,
+            'countryName' : self.country_name,
+            'movie' : self.movie,
+        }
+

@@ -6,6 +6,21 @@ from slugify import slugify
 from feedRankLib.Article import Article
 import thread
 from app import app
+from feed.FeedRepository import FeedArticleRepository
+
+def filter_feed(data):
+	feedArticleRepo = FeedArticleRepository()
+	if 'keywords' in data:
+		filterKeys = {
+			'keywords' : data['keywords']
+		}
+	else : 
+		filterKeys = {}
+	return feedArticleRepo.filter(filterKeys, data['item'], data['page'])
+
+def get_article_details(id):
+	feedArticleRepo = FeedArticleRepository()
+	return feedArticleRepo.get_by_id(id)
 
 def store(url, tags):
 	url = url.strip()
