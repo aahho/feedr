@@ -11,3 +11,4 @@ feedfinder2==0.0.4
 textblob==0.13.0
 newspaper==0.1.0.7
 socialshares==1.1.0
+python-crontab==2.2.6

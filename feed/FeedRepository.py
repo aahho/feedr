@@ -4,11 +4,11 @@ from App.Repository import *
 
 class FeedRepository():
  	"""docstring for FeedRepository"""
- 	def addFeed(self, data):
+ 	def add_feed(self, data):
  		pass
 
- 	def list():
- 		pass
+ 	def list_feeds(self):
+ 		return fetchAll(Feed)
 
  	def getFeedById(self, id):
  		pass

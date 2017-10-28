@@ -84,16 +84,20 @@ def store(url, tags):
 			url = entry.link
 			content = entry.summary
 			author = entry.author if 'author' in entry else None
-
-			newFeedArticle = FeedArticle(
-				title=title,
-				url=url,
-				content=content,
-				author=author,
-				feed_id=newFeed.id
-			)
-			db.session.add(newFeedArticle)
-			db.session.commit()
+			existing_article = FeedArticle.query.filter(FeedArticle.url == url).first()
+			if existing_article is None :
+				newFeedArticle = FeedArticle(
+					title=title,
+					url=url,
+					content=content,
+					author=author,
+					feed_id=newFeed.id
+				)
+				db.session.add(newFeedArticle)
+				db.session.commit()
+			else :
+				# return
+				newFeedArticle = existing_article
 
 			thread.start_new_thread(get_article_details, (newFeedArticle.id, url))
 	return render_template('add_url_page.html', feed = feed)

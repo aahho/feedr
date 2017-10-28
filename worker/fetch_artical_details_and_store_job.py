@@ -1,11 +1,13 @@
-from flask import Flask 
+from flask import Flask
 import get_link_data
-from App.Repository import *
+from feed.FeedRepository import *
+from feed.Controllers.FeedController import *
 from models import *
+import datetime
 
 def get_urls():
-	urls = fetchAll(FeedArticle, ['url'])
-	print urls[0].id
-	return {'worked' : 'worked'}
+    rss = FeedRepository().list_feeds()
+    for feed in rss:
+        data = store(feed.url, [])
+    return "worked"
 
-	

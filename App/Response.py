@@ -6,7 +6,7 @@ def respondWithItem(data, transformer='transform', statusCode=200, message = 'Su
 	response['data'] = getattr(data, transformer)()
 	response['code'] = statusCode
 	response['notification'] = {
-		'feedCode' : 'SE_'+str(statusCode),
+		'feedCode' : 'AHO_'+str(statusCode),
 		'message' : message,
 		'hint' : hint,
 		'type' : 'success'
@@ -35,7 +35,7 @@ def respondWithPaginatedCollection(data, transformer='transform', statusCode = 2
 		}
 	}
 	response['notification'] = {
-		'feedCode' : 'SE_'+str(statusCode),
+		'feedCode' : 'AHO_'+str(statusCode),
 		'message' : message,
 		'hint' : hint,
 		'type' : 'success'
@@ -48,7 +48,7 @@ def respondOk(message = 'Success', statusCode = 200, hint=''):
 	response['data'] = []
 	response['code'] = statusCode
 	response['notification'] = {
-		'feedCode' : 'SE_'+str(statusCode),
+		'feedCode' : 'AHO_'+str(statusCode),
 		'message' : message,
 		'hint' : hint,
 		'type' : 'success'
@@ -61,7 +61,7 @@ def respondWithError(message = 'Error', statusCode = 500, hint=''):
 	response['data'] = []
 	response['code'] = statusCode
 	response['notification'] = {
-		'feedCode' : 'SE_'+str(statusCode),
+		'feedCode' : 'AHO_'+str(statusCode),
 		'message' : message,
 		'hint' : hint,
 		'type' : 'error'
