@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, json, jsonify
+import datetime
 from __init__ import db
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -8,7 +9,7 @@ feed_article_category_table = db.Table('feed_category', db.Model.metadata,
     db.Column('feed_id', db.Integer, db.ForeignKey('feeds.id')),
     db.Column('categories', db.Integer, db.ForeignKey('categories.id'))
 )
-
+fmt = '%a, %d %b %Y %H:%M:%S'
 class Feed(db.Model):
     __tablename__= 'feeds'
 
@@ -54,7 +55,7 @@ class FeedArticle(db.Model):
             'rank' : self.rank,
             'image' : self.image,
             'keywords' : self.keywords.split(',') if self.keywords is not None else [],
-            'updatedAt' : self.updated_at
+            'updatedAt' : self.updated_at.strftime('%s')
         }
 
     def transform(self):
@@ -71,7 +72,7 @@ class FeedArticle(db.Model):
             'feedId' : self.feed_id,
             'shareCount' : self.share_count,
             'details' : self.article_details.transform() if self.article_details != None else None,
-            'updatedAt' : self.updated_at
+            'updatedAt' : self.updated_at.strftime('%s')
         }
 
 class Category(db.Model):

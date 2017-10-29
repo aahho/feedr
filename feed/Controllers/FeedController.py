@@ -23,18 +23,18 @@ def get_article_data(id):
 	return feedArticleRepo.get_by_id(id)
 
 def store(url, tags):
-	url = url.strip()
-	feed = feedparser.parse(url)
-
-	if len(feed.entries) <= 0:
-		feed_urls = find_feeds(url)
-		if len(feed_urls) > 0:
-			feed = feedparser.parse(feed_urls[0])
-			feed_url = feed_urls[0]
-		else :
-			return render_template('add_url_page.html', error = {'error' : 'Invalid Link'})
-	else : 
-		feed_url = url
+    url = url.strip()
+    feed = feedparser.parse(url)
+    if not len(feed.entries):
+        feed_urls = find_feeds(url)
+        print feed_urls
+        if len(feed_urls) > 0:
+            feed = feedparser.parse(feed_urls[0])
+            feed_url = feed_urls[0]
+        else :
+            return render_template('add_url_page.html', error = {'error' : 'Invalid Link'})
+    else : 
+        feed_url = url
 
 	if len(feed.entries) > 0:
 		associated_tags = []
@@ -110,7 +110,7 @@ def get_article_details(id, url):
 		except:
 			print "here"
 			FeedArticle.query.filter(FeedArticle.id == id).delete(synchronize_session=False)
-			return
+			return 
 		# print meta
 
 		article = FeedArticle.query.filter_by(id=id).first()
