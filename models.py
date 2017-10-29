@@ -55,7 +55,7 @@ class FeedArticle(db.Model):
             'rank' : self.rank,
             'image' : self.image,
             'keywords' : self.keywords.split(',') if self.keywords is not None else [],
-            'updatedAt' : self.updated_at.strftime('%s')
+            'updatedAt' : (self.updated_at - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
         }
 
     def transform(self):
@@ -72,7 +72,7 @@ class FeedArticle(db.Model):
             'feedId' : self.feed_id,
             'shareCount' : self.share_count,
             'details' : self.article_details.transform() if self.article_details != None else None,
-            'updatedAt' : self.updated_at.strftime('%s')
+            'updatedAt' : (self.updated_at - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
         }
 
 class Category(db.Model):
