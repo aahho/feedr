@@ -1,5 +1,5 @@
 from flask import Flask, json, jsonify
-import datetime
+from datetime import datetime, timedelta
 from __init__ import db
 from sqlalchemy import text
 from sqlalchemy.sql import func
@@ -51,12 +51,11 @@ class FeedArticle(db.Model):
     article_details = relationship(u'FeedArticleDetail', uselist=False, back_populates="feed_article")
 
     def duck_rank_percentile(self, duck_rank):
-        print duck_rank
         max_rank = db.session.query(func.max(FeedArticle.duck_rank)).scalar()
-        print max_rank
         return (duck_rank / max_rank) * 100
 
     def mini_transformer(self):
+        print dir(datetime.replace)
         return {
             'id' : self.id,
             'title' : self.title,
@@ -66,8 +65,8 @@ class FeedArticle(db.Model):
             'shareCount' : self.share_count,
             'image' : self.image,
             'keywords' : self.keywords.split(',') if self.keywords is not None else [],
-            'publishedAt' : (self.published_at - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0,
-            'updatedAt' : (self.updated_at - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
+            'publishedAt' : (self.published_at.utcnow() - datetime.utcfromtimestamp(0)).total_seconds() * 1000.0,
+            'updatedAt' : (self.updated_at.utcnow() - datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
         }
 
     def transform(self):
@@ -86,8 +85,8 @@ class FeedArticle(db.Model):
             'duckRank' : self.duck_rank_percentile(self.duck_rank),
             'shareCount' : self.share_count,
             'details' : self.article_details.transform() if self.article_details != None else None,
-            'publishedAt' : (self.published_at - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0,
-            'updatedAt' : (self.updated_at - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
+            'publishedAt' : (self.published_at.utcnow() - datetime.utcfromtimestamp(0)).total_seconds() * 1000.0,
+            'updatedAt' : (self.updated_at.utcnow() - datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
         }
 
 class Category(db.Model):
@@ -181,7 +180,7 @@ class UserDetail(db.Model):
     user = relationship(u'User')
 
 def expires_at():
-    return datetime.datetime.utcnow() + datetime.timedelta(days=7)
+    return datetime.utcnow() + datetime.timedelta(days=7)
 
 class UserToken(db.Model):
     __tablename__ = 'user_tokens'
