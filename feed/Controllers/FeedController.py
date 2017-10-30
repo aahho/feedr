@@ -81,6 +81,7 @@ def store(url, tags):
 
 		for entry in feed.entries:
 			title = entry.title
+			published_at = entry.published
 			url = entry.link
 			content = entry.summary
 			author = entry.author if 'author' in entry else None
@@ -91,6 +92,7 @@ def store(url, tags):
 					url=url,
 					content=content,
 					author=author,
+					published_at=published_at,
 					feed_id=newFeed.id
 				)
 				db.session.add(newFeedArticle)
@@ -99,19 +101,18 @@ def store(url, tags):
 				# return
 				newFeedArticle = existing_article
 
-			thread.start_new_thread(get_article_details, (newFeedArticle.id, url))
+			thread.start_new_thread(get_article_details, (newFeedArticle.id, url, newFeedArticle.published_at))
 	return render_template('add_url_page.html', feed = feed)
 
-def get_article_details(id, url):
+def get_article_details(id, url, published_at):
 	with app.app_context():
-		articleDetails = Article(url)
+		articleDetails = Article(url, published_at)
 		try:
 			meta = articleDetails.build_article_meta()
 		except:
 			print "here"
 			FeedArticle.query.filter(FeedArticle.id == id).delete(synchronize_session=False)
 			return 
-		# print meta
 
 		article = FeedArticle.query.filter_by(id=id).first()
 
@@ -120,6 +121,7 @@ def get_article_details(id, url):
 		article.keywords = meta['keywords'], 
 		article.image = meta['image'], 
 		article.summary = meta['summary'], 
+		article.duck_rank = meta['duck_rank'], 
 		article.sentiment = meta['sentiment'], 
 
 		newFeedArticleDetail = FeedArticleDetail(

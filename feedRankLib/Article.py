@@ -1,11 +1,15 @@
 from textblob import TextBlob
 import newspaper, urllib, re
 import socialshares
+from helpers import duck_rank_algo
 
 class Article:
-    def __init__(self, url):
+    def __init__(self, url, published_at):
         self.url = url
+        self.published_at = published_at
         self.setArticle()   
+        self.shares = []
+    
 
     def setArticle(self):
         self.article = newspaper.Article(self.url)
@@ -23,8 +27,9 @@ class Article:
             'keywords': self.get_keywords(),
             'authors': self.article.authors,
             'rank': self.calculate_rank(),
-            'sentiment': self.calculate_sentiment(),
             'share_count': self.get_share_count(),
+            'duck_rank' : self.calculate_duck_rank(),
+            'sentiment': self.calculate_sentiment(),
         }
 
     def get_keywords(self):
@@ -48,11 +53,13 @@ class Article:
         else:                                                                   
             return 0
 
+    def calculate_duck_rank(self):
+        return duck_rank_algo(self.article, self.calculate_rank(), self.shares, self.published_at)
+        
     def get_share_count(self):
-        shares = socialshares.fetch(self.url, ['facebook', 'pinterest', 'google', 'linkedin', 'reddit'])
-
-        return (shares['reddit']['ups'] if 'reddit' in shares else 0) \
-            + (shares['facebook']['share_count'] if 'facebook' in shares else 0) \
-            + (shares['google'] if 'google' in shares else 0) \
-            + (shares['pinterest'] if 'pinterest' in shares else 0) \
-            + (shares['linkedin'] if 'linkedin' in shares else 0)
+        self.shares = socialshares.fetch(self.url, ['facebook', 'pinterest', 'google', 'linkedin', 'reddit'])
+        return (self.shares['reddit']['ups'] if 'reddit' in self.shares else 0) \
+            + (self.shares['facebook']['share_count'] if 'facebook' in self.shares else 0) \
+            + (self.shares['google'] if 'google' in self.shares else 0) \
+            + (self.shares['pinterest'] if 'pinterest' in self.shares else 0) \
+            + (self.shares['linkedin'] if 'linkedin' in self.shares else 0)

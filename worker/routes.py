@@ -10,4 +10,4 @@ worker = Blueprint('worker', __name__, template_folder='templates')
 @worker.route('/worker', methods = ["GET", "POST"])
 def index():
 	if request.method == 'GET':
-		return json.jsonify(get_urls())
+		return get_urls()
