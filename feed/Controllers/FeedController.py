@@ -9,25 +9,24 @@ from app import app
 from feed.FeedRepository import FeedArticleRepository
 
 def filter_feed(data):
-	feedArticleRepo = FeedArticleRepository()
-	if 'keywords' in data:
-		filterKeys = {
-			'keywords' : data['keywords'],
-		}
-	else : 
-		filterKeys = {}
-	return feedArticleRepo.filter(filterKeys, data['item'] if 'item' in data else 10, data['page'] if 'page' in data else 1)
+    feedArticleRepo = FeedArticleRepository()
+    if 'keywords' in data:
+        filterKeys = {
+            'keywords' : data['keywords'],
+        }
+    else : 
+        filterKeys = {}
+    return feedArticleRepo.filter(filterKeys, data['item'] if 'item' in data else 10, data['page'] if 'page' in data else 1)
 
 def get_article_data(id):
-	feedArticleRepo = FeedArticleRepository()
-	return feedArticleRepo.get_by_id(id)
+    feedArticleRepo = FeedArticleRepository()
+    return feedArticleRepo.get_by_id(id)
 
 def store(url, tags):
     url = url.strip()
     feed = feedparser.parse(url)
     if not len(feed.entries):
         feed_urls = find_feeds(url)
-        print feed_urls
         if len(feed_urls) > 0:
             feed = feedparser.parse(feed_urls[0])
             feed_url = feed_urls[0]
@@ -36,101 +35,25 @@ def store(url, tags):
     else : 
         feed_url = url
 
-	if len(feed.entries) > 0:
-		associated_tags = []
+    existing_url = Feed.query.filter(Feed.url.ilike(r"%{}%".format(url))).first()
+    if not existing_url:
+        title = feed.feed.title
+        if 'icon' in feed.feed:
+            icon = feed.feed.icon
+        elif 'image' in feed.feed:
+            icon = feed.feed.image.href
+        else :
+            icon = None
 
-		for tag in tags:
-			slug = slugify(tag)
-			existing_tag = Category.query.filter(Category.slug == slug).first()
-			associated_tags.append(existing_tag)
-			if not existing_tag:
-				category = Category(
-					name=tag,
-					slug=slug
-				)
-				db.session.add(category)
-				db.session.commit()
-				associated_tags.append(existing_tag)
+        newFeed = Feed(
+            title=title,
+            url=url,
+            rss_url=feed_url,
+            icon=icon
+        )
+        db.session.add(newFeed)
+        db.session.commit()
 
-		# save to db
-		existing_url = Feed.query.filter(Feed.url.ilike(r"%{}%".format(url))).first()
-		if not existing_url:
-			title = feed.feed.title
-			if 'icon' in feed.feed:
-				icon = feed.feed.icon
-			elif 'image' in feed.feed:
-				icon = feed.feed.image.href
-			else :
-				icon = None
+    return render_template('add_url_page.html', success = True)
 
-			newFeed = Feed(
-				title=title,
-				url=url,
-				rss_url=feed_url,
-				icon=icon
-			)
-			newFeed.categories = associated_tags
-			db.session.add(newFeed)
-			db.session.commit()
-		else:
-			newFeed = existing_url
-			db.session.commit()
-
-		links = [entry.link for entry in feed.entries]
-		FeedArticle.query.filter(FeedArticle.url.notin_(links)).filter(FeedArticle.feed_id == newFeed.id).delete(synchronize_session=False)
-
-		for entry in feed.entries:
-			title = entry.title
-			published_at = entry.published
-			url = entry.link
-			content = entry.summary
-			author = entry.author if 'author' in entry else None
-			existing_article = FeedArticle.query.filter(FeedArticle.url == url).first()
-			if existing_article is None :
-				newFeedArticle = FeedArticle(
-					title=title,
-					url=url,
-					content=content,
-					author=author,
-					published_at=published_at,
-					feed_id=newFeed.id
-				)
-				db.session.add(newFeedArticle)
-				db.session.commit()
-			else :
-				# return
-				newFeedArticle = existing_article
-
-			thread.start_new_thread(get_article_details, (newFeedArticle.id, url, newFeedArticle.published_at))
-	return render_template('add_url_page.html', feed = feed)
-
-def get_article_details(id, url, published_at):
-	with app.app_context():
-		articleDetails = Article(url, published_at)
-		try:
-			meta = articleDetails.build_article_meta()
-		except:
-			print "here"
-			FeedArticle.query.filter(FeedArticle.id == id).delete(synchronize_session=False)
-			return 
-
-		article = FeedArticle.query.filter_by(id=id).first()
-
-		article.rank = meta['rank'], 
-		article.share_count = meta['share_count'], 
-		article.keywords = meta['keywords'], 
-		article.image = meta['image'], 
-		article.summary = meta['summary'], 
-		article.duck_rank = meta['duck_rank'], 
-		article.sentiment = meta['sentiment'], 
-
-		newFeedArticleDetail = FeedArticleDetail(
-			title=meta['title'],
-			content=meta['content'],
-			feed_article_id=article.id
-		)
-		db.session.add(newFeedArticleDetail)
-		db.session.commit()
-
-	print "Done"
 

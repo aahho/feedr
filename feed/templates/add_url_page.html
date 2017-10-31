@@ -15,30 +15,18 @@
 				</div>
 			</div>
 			<br>
-			<div class="row">	
-				<div class="col">
-					<div class="form-check form-check-inline">
-					  <label class="form-check-label">
-					    <input class="form-check-input" type="checkbox" value="travel" name="tags"> Travel
-					  </label>
-					</div>
-					<div class="form-check form-check-inline">
-					  <label class="form-check-label">
-					    <input class="form-check-input" type="checkbox" value="photography" name="tags"> Photography
-					  </label>
-					</div>
-					<div class="form-check form-check-inline">
-					  <label class="form-check-label">
-					    <input class="form-check-input" type="checkbox" value="bitcoin" name="tags"> Bitcoin
-					  </label>
-					</div>
-				</div>
-			</div>
-			<br>
 			{% if error %}
 				<div class="row alert alert-danger">
 					<div class="col text-center">
 						{{error.error}}
+					</div>
+				</div>
+			{% endif %}
+
+			{% if success %}
+				<div class="row alert alert-success">
+					<div class="col text-center">
+						Feed subscription added.
 					</div>
 				</div>
 			{% endif %}

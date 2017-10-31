@@ -1,17 +1,16 @@
 from textblob import TextBlob
 import newspaper, urllib, re
 import socialshares
-from helpers import duck_rank_algo
+from DuckRank import DuckRank
 
 class Article:
     def __init__(self, url, published_at):
         self.url = url
         self.published_at = published_at
-        self.setArticle()   
+        self.set_article()   
         self.shares = []
-    
 
-    def setArticle(self):
+    def set_article(self):
         self.article = newspaper.Article(self.url)
         self.article.download()
         self.article.parse()
@@ -31,8 +30,8 @@ class Article:
             'duck_rank' : self.calculate_duck_rank(),
             'sentiment': self.calculate_sentiment(),
         }
-
     def get_keywords(self):
+
         return ', '.join(self.article.keywords)
 
     def calculate_rank(self):
@@ -54,7 +53,7 @@ class Article:
             return 0
 
     def calculate_duck_rank(self):
-        return duck_rank_algo(self.article, self.calculate_rank(), self.shares, self.published_at)
+        return DuckRank(self.url, self.article, self.calculate_rank(), self.published_at).calculate()
         
     def get_share_count(self):
         self.shares = socialshares.fetch(self.url, ['facebook', 'pinterest', 'google', 'linkedin', 'reddit'])
