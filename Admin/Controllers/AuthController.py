@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, flash, url_for, session
 from models import User, UserToken
 from Exceptions.ExceptionHandler import FeedrException
-from Auth.AuthRepository import AuthRepository, UserTokenRepository
+from Admin.AuthRepository import AuthRepository, UserTokenRepository
 import helpers, datetime
 
 
@@ -20,7 +20,7 @@ def legacyLogin(email, password):
 				})
 			session['token'] = token
 			session['user'] = userObj.transform()
-			return redirect('/admin/home')
+			return redirect('/admin/apps')
 	flash(helpers.error('Invalid credentials'))
 	return redirect('/admin/')
 

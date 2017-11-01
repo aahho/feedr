@@ -201,3 +201,21 @@ class UserToken(db.Model):
             'expiresAt' : self.expires_at,
             'user' : self.user.transform()
         }
+
+class App(db.Model):
+    __tablename__ = 'apps'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    slug = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=func.now())
+    updated_at = db.Column(db.DateTime, nullable=False, default=func.now(), onupdate=func.now())
+
+    def transform(self):
+        return {
+            'id' : self.id,
+            'name' : self.name,
+            'slug' : self.slug,
+            'description' : self.description,
+        }

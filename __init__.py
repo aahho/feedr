@@ -9,7 +9,7 @@ app.config.from_pyfile('env.py')
 db = SQLAlchemy(app)
 
 from Http.routes import base
-from Auth.routes import auth
+from Admin.routes import auth
 from feed.routes import feed
 from worker.routes import worker
 

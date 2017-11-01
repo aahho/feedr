@@ -1,0 +1,28 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<br>
+<div class="container">
+    <nav aria-label="breadcrumb" role="navigation">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Create App</li>
+        </ol>
+    </nav>
+    <form action="/admin/apps" method="POST">
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="App Name" name="app_name">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="App Description" name="app_description">
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-md btn-success float-right" type="submit">Create</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

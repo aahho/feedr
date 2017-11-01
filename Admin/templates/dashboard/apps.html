@@ -1,0 +1,29 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <a href="apps/create">
+                <button class="btn btn-sm btn-success">Create App</button>
+            </a>
+        </div>
+    </div>
+    <br>
+    {% if apps %}
+        <div class="card-deck">
+        {% for app in apps %}
+            <a href="/admin/apps/{{app.id}}">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ app.name }}</h4>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ app.description }}</h6>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+        </div> 
+    {% endif %}
+</div>
+
+{% endblock %}

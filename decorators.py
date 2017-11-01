@@ -1,6 +1,6 @@
 from flask import Flask, session, redirect, request
 from Exceptions.ExceptionHandler import FeedrException
-from Auth.AuthRepository import UserTokenRepository
+from Admin.AuthRepository import UserTokenRepository
 from models import UserToken
 
 def login_required(func):
