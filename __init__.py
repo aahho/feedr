@@ -14,7 +14,7 @@ from feed.routes import feed
 from worker.routes import worker
 
 app.register_blueprint(base)
-app.register_blueprint(auth)
+app.register_blueprint(auth, url_prefix = '/admin')
 app.register_blueprint(feed)
 app.register_blueprint(worker)
 

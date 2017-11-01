@@ -180,7 +180,7 @@ class UserDetail(db.Model):
     user = relationship(u'User')
 
 def expires_at():
-    return datetime.utcnow() + datetime.timedelta(days=7)
+    return datetime.utcnow() + timedelta(days=7)
 
 class UserToken(db.Model):
     __tablename__ = 'user_tokens'
