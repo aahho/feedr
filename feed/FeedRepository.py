@@ -25,3 +25,10 @@ class FeedArticleRepository():
 
 	def get_by_id(self, id):
 		return filterByAttribute(FeedArticle, {id : 'id'})
+
+class FeedArticleDetailRepository():
+ 	"""docstring for FeedArticleDetailRepository"""
+
+ 	def list_article_details(self):
+ 		return fetchAll(FeedArticleDetail)
+
