@@ -42,7 +42,6 @@ def api_logout():
     return respondOk('Successfully Logout');
 
 @auth.route('/appLogout', methods=['GET'])
-@api_login_required
 def appLogout():
     response = logoutUser()
     return response;
