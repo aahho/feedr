@@ -1,7 +1,10 @@
 from flask import Flask, request, url_for
 import bcrypt, uuid, random, requests
-import datetime
+import datetime, time
 
+
+def datetime_to_epoch(date):
+    return time.mktime(date.timetuple())*1000
 '''
 To create url for pagination 
 '''

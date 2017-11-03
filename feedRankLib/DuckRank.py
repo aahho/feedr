@@ -8,11 +8,12 @@ class DuckRank:
     REDDIT_WEIGHTAGE = 0.6
     GOOGLE_WEIGHTAGE = 0.7
     DEVIANCE = 0.85
+    GRAVITY_CONST = 1.8
 
     def __init__(self, url, article, alexa_rank, published_at):
         self.url = url
         self.article = article
-        self.alexa_rank = alexa_rank
+        self.alexa_rank = alexa_rank  
         self.published_at = published_at
         self.shares = {}
 
@@ -28,11 +29,11 @@ class DuckRank:
     def set_social_media_share_counts(self):
         shares = socialshares.fetch(self.url, ['facebook', 'pinterest', 'google', 'linkedin', 'reddit'])
 
-        self.shares['reddit'] = (shares['reddit']['ups'] if 'reddit' in shares else 0) / self.article_age
-        self.shares['facebook'] = (shares['facebook']['share_count'] if 'facebook' in shares else 0) / self.article_age
-        self.shares['google'] = (shares['google'] if 'google' in shares else 0) / self.article_age
-        self.shares['pinterest'] = (shares['pinterest'] if 'pinterest' in shares else 0) / self.article_age
-        self.shares['linkedin'] = (shares['linkedin'] if 'linkedin' in shares else 0) / self.article_age
+        self.shares['reddit'] = (shares['reddit']['ups'] if 'reddit' in shares else 0) 
+        self.shares['facebook'] = (shares['facebook']['share_count'] if 'facebook' in shares else 0) 
+        self.shares['google'] = (shares['google'] if 'google' in shares else 0) 
+        self.shares['pinterest'] = (shares['pinterest'] if 'pinterest' in shares else 0) 
+        self.shares['linkedin'] = (shares['linkedin'] if 'linkedin' in shares else 0) 
 
     # no. of incoming sources of the article
     def set_pr(self):
@@ -46,7 +47,8 @@ class DuckRank:
     algo for duck rank calculation
     '''
     def calculate(self):
-        return self.first_step_calculation() + self.second_step_calculation() + self.third_step_calculation()
+        return self.first_step_calculation() + \
+        (self.second_step_calculation() / (self.alexa_rank * ((self.article_age + 2)**self.GRAVITY_CONST)))
 
     def first_step_calculation(self):
         if self.cr > 0:
@@ -59,12 +61,12 @@ class DuckRank:
             (self.shares['facebook'] * self.FACEBOOK_WEIGHTAGE) + \
             (self.shares['google'] * self.GOOGLE_WEIGHTAGE) + \
             (self.shares['pinterest'] * self.PINTEREST_WEIGHTAGE) + \
-            (self.shares['linkedin'] * self.LINKEDIN_WEIGHTAGE)
+            (self.shares['linkedin'] * self.LINKEDIN_WEIGHTAGE) + 1
 
-    def third_step_calculation(self):
-        max_count = max(self.shares.values())
-        if max_count > 0 :
-            return (self.shares['reddit'] / max_count) + (self.shares['facebook'] / max_count) + \
-                (self.shares['google'] / max_count) + (self.shares['google'] / max_count) + \
-                (self.shares['linkedin'] / max_count)
-        return 0
+    # def third_step_calculation(self):
+    #     max_count = max(self.shares.values())
+    #     if max_count > 0 :
+    #         return (self.shares['reddit'] / max_count) + (self.shares['facebook'] / max_count) + \
+    #             (self.shares['google'] / max_count) + (self.shares['google'] / max_count) + \
+    #             (self.shares['linkedin'] / max_count)
+    #     return 0

@@ -21,7 +21,14 @@ class CategoryRepository():
 class FeedArticleRepository():
 	"""docstring for FeedDetailsRepository"""
 	def filter(self, filterKeys, item, page):
-		return filterByAttributePaginated(FeedArticle, filterKeys, item, page, {'duck_rank': 'desc', 'share_count': 'desc'})
+		return filterByAttributePaginated(FeedArticle, filterKeys, item, page, {'duck_rank': 'desc', 'published_at' : 'desc'})
 
 	def get_by_id(self, id):
 		return filterByAttribute(FeedArticle, {id : 'id'})
+
+class FeedArticleDetailRepository():
+ 	"""docstring for FeedArticleDetailRepository"""
+
+ 	def list_article_details(self):
+ 		return fetchAll(FeedArticleDetail)
+
