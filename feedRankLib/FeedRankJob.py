@@ -54,7 +54,6 @@ class FeedRankJob:
     def extract_data(self, feed):
         parsed_feed = feedparser.parse(feed.rss_url)
         links = [entry.link for entry in parsed_feed.entries]
-        FeedArticle.query.filter(FeedArticle.url.notin_(links)).filter(FeedArticle.feed_id == feed.id).delete(synchronize_session=False)
 
         for entry in parsed_feed.entries:
             existing_article = FeedArticle.query.filter(FeedArticle.url == entry.link).first()
