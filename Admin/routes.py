@@ -59,13 +59,25 @@ def apps():
     
     return AppController.index()
 
-@auth.route('/apps/<app_id>', methods=['GET'])
-# @login_required
-def get_app(app_id):
-    return AppController.find(app_id)
+@auth.route('/apps/<app_id>', methods=['GET', 'POST'])
+@login_required
+def get_or_update_app(app_id):
+    if request.method == 'GET':
+        return AppController.find(app_id)
+    return AppController.update(request, app_id)
+
+@auth.route('/apps/<app_id>/edit', methods=['GET'])
+@login_required
+def edit_app(app_id):
+    return AppController.edit_page(app_id)
+
+@auth.route('/apps/<app_id>/delete', methods=['GET'])
+@login_required
+def delete(app_id):
+    return AppController.delete_app(app_id)
 
 @auth.route('/api/apps/<app_id>/feeds', methods=['GET'])
-# @login_required
+@login_required
 def get_app_feeds(app_id):
     print respondWithCollection(AppController.get_app_feeds(app_id))
     return respondWithCollection(AppController.get_app_feeds(app_id))

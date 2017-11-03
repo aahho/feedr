@@ -25,8 +25,9 @@ def filter_attribute(modelName, filterKeys):
     return modelName.query.filter_by(**filterKeys)
 
 def update(modelName, filterKeys, updateWith):
-    updateWith.update({'updated_at':datetime.datetime.now()})
-    return modelName.query.filter(**filterKeys).update(**updateWith) 
+	row = session.query(modelName).filter_by(**filterKeys).update(updateWith) 
+	session.commit()
+	return row
 
 def fetchAll(modelName):
     return modelName.query.all()
@@ -43,7 +44,7 @@ def store(modelName, values):
 	return modelInstance
 
 def delete(modelName, filterKeys):
-	rows = session.query(modelName).filter(modelName.token==filterKeys['token']).delete()
+	rows = session.query(modelName).filter_by(**filterKeys).delete()
 	# print dd.delete(synchronize_session = False)
 	session.commit()
 	return rows

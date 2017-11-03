@@ -1,0 +1,39 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<br>
+<div class="container">
+    <nav aria-label="breadcrumb" role="navigation">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Update App</li>
+        </ol>
+    </nav>
+    <form action="/admin/apps/{{app.id}}" method="POST">
+        <input type="hidden" name="_method" value="put">
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="{{app.name}}" value="{{app.name}}" name="app_name" required>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="{{app.description}}" value="{{app.description}}" name="app_description">
+            </div>
+        </div>
+
+        {% if error %}
+        <br/>
+        <div class="row alert alert-danger">
+            <div class="col text-center">
+                {{ error }}
+            </div>
+        </div>
+        {% endif %}
+
+        <br>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-md btn-success float-right" type="submit">Update</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

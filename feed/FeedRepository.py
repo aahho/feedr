@@ -20,8 +20,8 @@ class CategoryRepository():
 
 class FeedArticleRepository():
 	"""docstring for FeedDetailsRepository"""
-	def filter(self, filterKeys, item, page):
-		return filterByAttributePaginated(FeedArticle, filterKeys, item, page, {'duck_rank': 'desc', 'published_at' : 'desc'})
+	def filter(self, filterKeys, item, page, order):
+		return filterByAttributePaginated(FeedArticle, filterKeys, item, page, order)
 
 	def get_by_id(self, id):
 		return filterByAttribute(FeedArticle, {id : 'id'})

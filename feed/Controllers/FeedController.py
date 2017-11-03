@@ -17,7 +17,21 @@ def filter_feed(data):
         }
     else : 
         filterKeys = {}
-    return feedArticleRepo.filter(filterKeys, data['item'] if 'item' in data else 10, data['page'] if 'page' in data else 1)
+    if 'sort' in data:
+        if data['sort'] == 'top':
+            order = {
+                'duck_rank' : 'desc'
+            }
+        elif data['sort'] == 'latest':
+            order = {
+                'published_at' : 'desc'
+            }
+    else :
+        order = {
+            'duck_rank' : 'desc',
+            'published_at' : 'desc'
+        }
+    return feedArticleRepo.filter(filterKeys, data['item'] if 'item' in data else 10, data['page'] if 'page' in data else 1, order)
 
 def get_article_data(id):
     feedArticleRepo = FeedArticleRepository()
