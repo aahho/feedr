@@ -7,6 +7,8 @@ from feedRankLib.Article import Article
 from App.Response import *
 import thread
 from app import app
+from sqlalchemy import text
+import datetime
 from feed.FeedRepository import FeedArticleRepository
 
 def filter_feed(data):
@@ -17,13 +19,20 @@ def filter_feed(data):
         }
     else : 
         filterKeys = {}
-    if 'sort' in data:
-        if data['sort'] == 'top':
+    if 'news' in data:
+        if data['news'] == 'hot':
             order = {
                 'duck_rank' : 'desc'
             }
-        elif data['sort'] == 'latest':
+            filterKeys['query'] = text("published_at>= '" +\
+                            (datetime.datetime.now() - datetime.timedelta(days=2)).__str__() + "'")
+        elif data['news'] == 'latest':
             order = {
+                'published_at' : 'desc'
+            }
+        elif data['news'] == 'top':
+            order = {
+                'duck_rank' : 'desc',
                 'published_at' : 'desc'
             }
     else :

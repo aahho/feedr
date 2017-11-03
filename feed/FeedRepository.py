@@ -1,4 +1,5 @@
 from models import *
+from sqlalchemy import text
 from App.Repository import *
 # from flask.ext.sqlalchemy import get_debug_queries
 
@@ -21,7 +22,13 @@ class CategoryRepository():
 class FeedArticleRepository():
 	"""docstring for FeedDetailsRepository"""
 	def filter(self, filterKeys, item, page, order):
-		return filterByAttributePaginated(FeedArticle, filterKeys, item, page, order)
+		if 'query' in filterKeys :
+			return filterByAttributePaginated(FeedArticle,\
+			 expressions=filterKeys, \
+			 item=item, page=page, sortBy=order)
+		return filterByAttributePaginated(FeedArticle,\
+			 filterKeys=filterKeys, \
+			 item=item, page=page, sortBy=order)
 
 	def get_by_id(self, id):
 		return filterByAttribute(FeedArticle, {id : 'id'})

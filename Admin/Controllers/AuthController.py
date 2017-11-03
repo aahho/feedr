@@ -27,7 +27,7 @@ def legacyLogin(email, password):
 def legacyLoginApi(data):
 	repo = AuthRepository()
 	tokenRepo = UserTokenRepository()
-	userObj = repo.filter_attribute(User, {'email': data['email'], 'is_god':True})
+	userObj = repo.filter_attribute(User, {'email': data['email']})
 	if hasattr(userObj, 'email'):
 		isValid = helpers.validate_hash_password(data['password'], userObj.password)
 		if isValid:

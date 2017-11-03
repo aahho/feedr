@@ -9,10 +9,14 @@ session = session.Session(bind=create_engine(env.SQLALCHEMY_DATABASE_URI))
 def filterByAttribute(modelName, filterKeys):
     return modelName.query.get(filterKeys)
 
-def filterByAttributePaginated(modelName, filterKeys, item=25, page=1, sortBy={'created_at':'desc'}):
+def filterByAttributePaginated(modelName, filterKeys={}, expressions=None, item=25, page=1, sortBy={'created_at':'desc'}):
 	orderBy = []
 	for column, order in sortBy.iteritems() :
 		orderBy.append(getattr(getattr(modelName, column), order)())
+
+	if expressions is not None:
+		print expressions
+		return modelName.query.filter(expressions['query']).order_by(*orderBy).paginate(page=int(page), per_page=int(item), error_out=False)
 	return modelName.query.filter_by(**filterKeys).order_by(*orderBy).paginate(page=int(page), per_page=int(item), error_out=False)
 
 def authenticate(modelName, access_token):
