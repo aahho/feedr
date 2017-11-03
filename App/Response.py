@@ -14,6 +14,22 @@ def respondWithItem(data, transformer='transform', statusCode=200, message = 'Su
 	response['version'] = 1
 	return json.jsonify(response)
 
+def respondWithCollection(data, transformer='transform', statusCode = 200, message = 'Success', hint=''):
+    response_data = []
+    response = dict(())
+    for item in data:
+        response_data.append(getattr(item, transformer)()) 
+    response['data'] = response_data
+    response['code'] = statusCode
+    response['notification'] = {
+        'feedCode' : 'AHO_'+str(statusCode),
+        'message' : message,
+        'hint' : hint,
+        'type' : 'success'
+    }
+    response['version'] = 1
+    return json.jsonify(response)
+
 def respondWithPaginatedCollection(data, transformer='transform', statusCode = 200, message = 'Success', hint=''):
 	response_data = []
 	response = dict(())

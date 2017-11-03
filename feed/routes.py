@@ -8,14 +8,14 @@ from models import *
 
 feed = Blueprint('feed', __name__, template_folder='templates')
 
-@feed.route('/feeds', methods = ["GET", "POST"])
+@feed.route('/feeds', methods = ["POST"])
 def index():
 	if request.method == 'POST':
-		feed_url = request.form.get('url')
-		tags = request.form.getlist('tags')
-		return store(feed_url, tags)
+		return store(request)
 
-	return render_template('add_url_page.html')
+@feed.route('/feeds/<feed_id>', methods = ["DELETE"])
+def delete(feed_id):
+    return destroy(feed_id)
 
 @feed.route('/feeds/articles/filter', methods = ['GET'])
 def filter():

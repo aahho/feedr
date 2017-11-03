@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, request, session
-from flask import render_template
+from flask import render_template, jsonify
 from App.Response import *
 from Controllers.AuthController import *
 from Controllers import AppController
@@ -58,3 +58,15 @@ def apps():
         return AppController.store(request)
     
     return AppController.index()
+
+@auth.route('/apps/<app_id>', methods=['GET'])
+# @login_required
+def get_app(app_id):
+    return AppController.find(app_id)
+
+@auth.route('/api/apps/<app_id>/feeds', methods=['GET'])
+# @login_required
+def get_app_feeds(app_id):
+    print respondWithCollection(AppController.get_app_feeds(app_id))
+    return respondWithCollection(AppController.get_app_feeds(app_id))
+    

@@ -10,12 +10,22 @@
     <form action="/admin/apps" method="POST">
         <div class="row">
             <div class="col">
-                <input type="text" class="form-control" placeholder="App Name" name="app_name">
+                <input type="text" class="form-control" placeholder="App Name" name="app_name" required>
             </div>
             <div class="col">
                 <input type="text" class="form-control" placeholder="App Description" name="app_description">
             </div>
         </div>
+
+        {% if error %}
+        <br/>
+        <div class="row alert alert-danger">
+            <div class="col text-center">
+                {{ error }}
+            </div>
+        </div>
+        {% endif %}
+
         <br>
         <div class="row">
             <div class="col">

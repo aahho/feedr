@@ -1,0 +1,104 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<br>
+<div class="container-fluid" id="app">
+    <div class="card bg-light mb-3">
+        <div class="card-header"><h4><strong>{{ app.name }}</strong></h4></div>
+    </div>
+    <form>
+        <div class="form-row">
+            <div class="col">
+                <input type="url" class="form-control" placeholder="Feed URL" v-model="feed_url">
+                <small class="form-text text-danger" v-if="error">
+                    [[ error ]]
+                </small>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-md btn-success" @click.prevent="addNewFeed">Add</button>
+            </div>
+        </div>
+    </form>
+    <br>
+    <table class="table" v-if="feeds.length > 0">
+        <thead >
+            <th>Url</th>
+            <th></th>
+        </thead>
+        <tbody>
+            <tr v-for="feed in feeds">
+                <td><a href="[[ feed.url ]]">[[ feed.url ]]</a></td>
+                <td><button class="btn btn-sm btn-danger" @click="deleteFeed(feed)">Delete</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+ new Vue({
+    el: '#app',
+    data: {
+        app_id: {{ app.id }},
+        feeds: [],
+        feed_url: '',
+        error: ''
+    },
+    delimiters: ['[[', ']]'],
+    mounted: function () {
+        this.getAppDetails();
+    },
+    methods: {
+        getAppDetails: function(app_id) {
+            const vm = this;
+            axios.get('/admin/api/apps/' + vm.app_id + '/feeds')
+            .then(function (response) {
+                vm.feeds = response.data.data;
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+
+        addNewFeed: function() {
+            const vm = this;
+            vm.error = '';
+            axios.post('/feeds', {
+                url: this.feed_url,
+                app_id: this.app_id,
+            })
+                .then(function (response) {
+                    if (response.data.error) {
+                        vm.error = response.data.error;
+                    } else {
+                        vm.feed_url = '';
+                        vm.feeds.unshift(response.data.data);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+
+        deleteFeed: function(item) {
+            const vm = this;
+            vm.error = '';
+            axios.delete('/feeds/' + item.id)
+                .then(function (response) {
+                    if (response.data.success) {
+                        vm.feeds = vm.feeds.filter(function (feed) {
+                            return feed.id != item.id;
+                        });
+                    } else {
+                        vm.error = "Not able to delete feed";
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+    }
+ });
+</script>
+{% endblock %}

@@ -11,6 +11,24 @@ feed_article_category_table = db.Table('feed_category', db.Model.metadata,
     db.Column('categories', db.Integer, db.ForeignKey('categories.id'))
 )
 
+class App(db.Model):
+    __tablename__ = 'apps'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    slug = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=func.now())
+    updated_at = db.Column(db.DateTime, nullable=False, default=func.now(), onupdate=func.now())
+
+    def transform(self):
+        return {
+            'id' : self.id,
+            'name' : self.name,
+            'slug' : self.slug,
+            'description' : self.description,
+        }
+
 class Feed(db.Model):
     __tablename__= 'feeds'
 
@@ -18,6 +36,7 @@ class Feed(db.Model):
     title = db.Column(db.Text)
     url = db.Column(db.Text)
     rss_url = db.Column(db.Text)
+    app_id = db.Column(db.ForeignKey(u'apps.id', ondelete=u'CASCADE'), nullable=False)
     icon = db.Column(db.Text)
     feed_updated_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
@@ -27,6 +46,14 @@ class Feed(db.Model):
         "Category",
         secondary=feed_article_category_table,
         back_populates="feeds")
+
+    def transform(self):
+        return {
+            'id' : self.id,
+            'title' : self.title,
+            'url' : self.rss_url,
+            'icon' : self.icon,
+        }
 
 class FeedArticle(db.Model):
     __tablename__= 'feed_articles'
@@ -200,22 +227,4 @@ class UserToken(db.Model):
             'token' : self.token,
             'expiresAt' : self.expires_at,
             'user' : self.user.transform()
-        }
-
-class App(db.Model):
-    __tablename__ = 'apps'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    slug = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=func.now())
-    updated_at = db.Column(db.DateTime, nullable=False, default=func.now(), onupdate=func.now())
-
-    def transform(self):
-        return {
-            'id' : self.id,
-            'name' : self.name,
-            'slug' : self.slug,
-            'description' : self.description,
         }
