@@ -47,7 +47,6 @@ class DuckRank:
     algo for duck rank calculation
     '''
     def calculate(self):
-        print self.first_step_calculation(), self.second_step_calculation(), self.alexa_rank
         return self.first_step_calculation() + \
         (self.second_step_calculation() / (self.alexa_rank * ((self.article_age + 2)**self.GRAVITY_CONST)))
 

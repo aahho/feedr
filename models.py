@@ -5,6 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import ARRAY, array
+from helpers import datetime_to_epoch
 
 feed_article_category_table = db.Table('feed_category', db.Model.metadata,
     db.Column('feed_id', db.Integer, db.ForeignKey('feeds.id')),
@@ -44,6 +45,7 @@ class FeedArticle(db.Model):
     summary = db.Column(db.Text)
     sentiment = db.Column(db.SmallInteger)
     feed_id = db.Column(db.ForeignKey(u'feeds.id', ondelete=u'CASCADE'), nullable=False)
+    # clustered_article = db.Column(ARRAY(db.Text), default=db.cast(array([], type_=db.Text), ARRAY(db.Text)))
     published_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
@@ -55,7 +57,6 @@ class FeedArticle(db.Model):
         return (duck_rank / max_rank) * 100
 
     def mini_transformer(self):
-        print dir(datetime.replace)
         return {
             'id' : self.id,
             'title' : self.title,
@@ -65,8 +66,8 @@ class FeedArticle(db.Model):
             'shareCount' : self.share_count,
             'image' : self.image,
             'keywords' : self.keywords.split(',') if self.keywords is not None else [],
-            'publishedAt' : (self.published_at.utcnow() - datetime.utcfromtimestamp(0)).total_seconds() * 1000.0,
-            'updatedAt' : (self.updated_at.utcnow() - datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
+            'publishedAt' : datetime_to_epoch(self.published_at),
+            'updatedAt' : datetime_to_epoch(self.updated_at)
         }
 
     def transform(self):
@@ -85,8 +86,8 @@ class FeedArticle(db.Model):
             'duckRank' : self.duck_rank_percentile(self.duck_rank),
             'shareCount' : self.share_count,
             'details' : self.article_details.transform() if self.article_details != None else None,
-            'publishedAt' : (self.published_at.utcnow() - datetime.utcfromtimestamp(0)).total_seconds() * 1000.0,
-            'updatedAt' : (self.updated_at.utcnow() - datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
+            'publishedAt' : datetime_to_epoch(self.published_at),
+            'updatedAt' : datetime_to_epoch(self.updated_at)     
         }
 
 class Category(db.Model):
