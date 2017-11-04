@@ -186,7 +186,7 @@ class User(db.Model):
             'email' : self.email,
             'isGod' : self.is_god,
             'isBanned' : self.is_banned,
-            'lastLoginLocation' : self.last_login_location
+            # 'lastLoginLocation' : self.last_login_location
         }
 
 

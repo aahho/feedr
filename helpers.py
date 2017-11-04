@@ -17,7 +17,7 @@ def url_for_other_page(page):
 To hash the password
 '''
 def hash_password(password):
-    return bcrypt.hashpw(password, bcrypt.gensalt())
+    return bcrypt.hashpw(str(password), bcrypt.gensalt())
 
 '''
 To hash the access-token

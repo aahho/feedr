@@ -1,10 +1,8 @@
 from models import *
 import datetime
 import env
-from sqlalchemy.orm import  sessionmaker,session
+from sqlalchemy.orm import  sessionmaker
 from sqlalchemy import create_engine
-
-session = session.Session(bind=create_engine(env.SQLALCHEMY_DATABASE_URI))
 
 def filterByAttribute(modelName, filterKeys):
     return modelName.query.get(filterKeys)
@@ -16,7 +14,7 @@ def filterByAttributePaginated(modelName, filterKeys={}, expressions=None, item=
 
 	if expressions is not None:
 		print expressions
-		return modelName.query.filter(expressions['query']).order_by(*orderBy).paginate(page=int(page), per_page=int(item), error_out=False)
+		return modelName.query.filter(expressions['query']).filter_by(**filterKeys).order_by(*orderBy).paginate(page=int(page), per_page=int(item), error_out=False)
 	return modelName.query.filter_by(**filterKeys).order_by(*orderBy).paginate(page=int(page), per_page=int(item), error_out=False)
 
 def authenticate(modelName, access_token):
@@ -29,8 +27,8 @@ def filter_attribute(modelName, filterKeys):
     return modelName.query.filter_by(**filterKeys)
 
 def update(modelName, filterKeys, updateWith):
-	row = session.query(modelName).filter_by(**filterKeys).update(updateWith) 
-	session.commit()
+	row = db.session.query(modelName).filter_by(**filterKeys).update(updateWith) 
+	db.session.commit()
 	return row
 
 def fetchAll(modelName):
@@ -43,14 +41,14 @@ def fetchSelect(modelName, select_params):
 
 def store(modelName, values):
 	modelInstance = modelName(**values)
-	session.add(modelInstance)
-	session.commit()
+	db.session.add(modelInstance)
+	db.session.commit()
 	return modelInstance
 
 def delete(modelName, filterKeys):
-	rows = session.query(modelName).filter_by(**filterKeys).delete()
+	rows = db.session.query(modelName).filter_by(**filterKeys).delete()
 	# print dd.delete(synchronize_session = False)
-	session.commit()
+	db.session.commit()
 	return rows
 
 

@@ -9,13 +9,15 @@ app.config.from_pyfile('env.py')
 db = SQLAlchemy(app)
 
 from Http.routes import base
-from Admin.routes import auth
+from Admin.routes import admin
+from Auth.routes import auth
 from feed.routes import feed
 from worker.routes import worker
 
 app.register_blueprint(base)
-app.register_blueprint(auth, url_prefix = '/admin')
+app.register_blueprint(admin, url_prefix = '/admin')
 app.register_blueprint(feed)
+app.register_blueprint(auth)
 app.register_blueprint(worker)
 
 # custome handler
