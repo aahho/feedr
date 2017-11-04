@@ -7,6 +7,7 @@ from __init__ import app, db
 from models import *
 from worker.fetch_artical_details_and_store_job import get_urls
 from seeders.SeedManager import user_seeder
+from  seeders import FeedSeeder
 from feedRankLib.GroupArticles import group_articles
 
 manager = Manager(app)
@@ -21,6 +22,10 @@ class SeedCommand(Command):
 	def run(self) :
 		user_seeder()
 
+class SeedFeedCommand(Command):
+    def run(self) :
+        FeedSeeder.seed()
+
 class GroupingCommand(Command):
 	"""docstring for GroupingCommand"""
 	def run(self):
@@ -29,6 +34,7 @@ class GroupingCommand(Command):
 
 manager.add_command('cron', CronCommand)
 manager.add_command('seed', SeedCommand)
+manager.add_command('seedFeed', SeedFeedCommand)
 manager.add_command('group', GroupingCommand)
 
 if __name__ == '__main__':

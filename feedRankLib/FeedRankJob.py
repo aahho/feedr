@@ -4,6 +4,7 @@ import feedparser
 import thread
 from feedRankLib import Article
 import threading
+import datetime
 
 class ArticleDetails(threading.Thread):
     
@@ -45,9 +46,7 @@ class ArticleDetails(threading.Thread):
             )
             db.session.add(newFeedArticleDetail)
             db.session.commit()
-
-        print "Done"
-
+            db.session.close()
 
 class FeedRankJob:
     def __init__(self):
@@ -60,6 +59,8 @@ class FeedRankJob:
         parsed_feed = feedparser.parse(feed.rss_url)
         links = [entry.link for entry in parsed_feed.entries]
 
+        threads = []
+
         for entry in parsed_feed.entries:
             existing_article = FeedArticle.query.filter(FeedArticle.url == entry.link).first()
             if existing_article is None :
@@ -68,7 +69,7 @@ class FeedRankJob:
                     url=entry.link,
                     content=entry.summary,
                     author=entry.author if 'author' in entry else None,
-                    published_at=entry.published,
+                    published_at=entry.published if 'published' in entry else datetime.datetime.now(),
                     feed_id=feed.id
                 )
                 db.session.add(newFeedArticle)
@@ -76,7 +77,12 @@ class FeedRankJob:
             else :
                 newFeedArticle = existing_article
 
-            ArticleDetails(newFeedArticle.id, newFeedArticle.url, newFeedArticle.published_at).start()
+            threads.append(ArticleDetails(newFeedArticle.id, newFeedArticle.url, newFeedArticle.published_at))
+
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(20)
 
     def execute(self):
         for feed in self.feeds:
