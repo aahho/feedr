@@ -17,6 +17,9 @@ class Article:
         self.article.nlp()  
 
     def build_article_meta(self):
+        if not self.article.is_valid_body():
+            return False
+
         return {
             'title': self.article.title,
             'content': self.article.text,

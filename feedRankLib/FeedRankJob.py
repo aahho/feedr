@@ -23,6 +23,11 @@ class ArticleDetails(threading.Thread):
 
             try:
                 meta = articleDetails.build_article_meta()
+                if not meta:
+                    article_to_be_deleted = FeedArticle.query.filter(FeedArticle.id == self.article_id).first()
+                    db.session.delete(article_to_be_deleted)
+                    db.session.commit()
+                    return
             except:
                 article_to_be_deleted = FeedArticle.query.filter(FeedArticle.id == self.article_id).first()
                 db.session.delete(article_to_be_deleted)
