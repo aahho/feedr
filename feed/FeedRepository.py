@@ -21,14 +21,9 @@ class CategoryRepository():
 
 class FeedArticleRepository():
 	"""docstring for FeedDetailsRepository"""
-	def filter(self, filterKeys, item, page, order):
-		if 'query' in filterKeys :
-			return filterByAttributePaginated(FeedArticle,\
-			 expressions=filterKeys, \
-			 item=item, page=page, sortBy=order)
-		return filterByAttributePaginated(FeedArticle,\
-			 filterKeys=filterKeys, \
-			 item=item, page=page, sortBy=order)
+	def filter(self, query, item, page):
+		return filerByRawPaginated(query, \
+			 item=item, page=page)
 
 	def get_by_id(self, id):
 		return filterByAttribute(FeedArticle, {id : 'id'})

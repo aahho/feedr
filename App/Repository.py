@@ -7,6 +7,9 @@ from sqlalchemy import create_engine
 def filterByAttribute(modelName, filterKeys):
     return modelName.query.get(filterKeys)
 
+def filerByRawPaginated(query, item=25, page=1):
+	return query.paginate(page=int(page), per_page=int(item), error_out=False)
+
 def filterByAttributePaginated(modelName, filterKeys={}, expressions=None, item=25, page=1, sortBy={'created_at':'desc'}):
 	orderBy = []
 	for column, order in sortBy.iteritems() :

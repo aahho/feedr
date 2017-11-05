@@ -1,5 +1,6 @@
 from flask import render_template, redirect 
 from models import *
+import helpers
 from slugify import slugify
 from Admin.AppRepository import AppRepository
 
@@ -19,6 +20,7 @@ def store(request):
     if existing_app:
         return render_template('dashboard/app_create.html', error="App already exists")
     newApp = App(
+        id=helpers.generate_unique_code(),
         name=name,
         slug=slug,
         description=description
