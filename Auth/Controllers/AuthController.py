@@ -46,7 +46,7 @@ def legacy_login_api(data):
 	raise FeedrException('Invalid credentials', 422)
 
 def googleLogin(token):
-	GoogleAuthentication.authenticate_token(token)
+	# GoogleAuthentication.authenticate_token(token)
 	user_info = GoogleAuthentication.get_user_details(token)
 	repo = AuthRepository().filter_attribute(user_info['email'])
 	if repo is None:
