@@ -9,7 +9,7 @@ from App.Response import *
 import thread
 from app import app
 from sqlalchemy import text, or_, desc
-import datetime
+import datetime, tldextract
 from feed.FeedRepository import FeedArticleRepository
 
 def filter_feed(data):
@@ -66,11 +66,13 @@ def store(request):
             icon = feed.feed.image.href
         else :
             icon = None
-
+        ext = tldextract.extract(url)
+        domain_name = ext.domain + '.' + ext.suffix
         newFeed = Feed(
             id=helpers.generate_unique_code(),
             title=title,
             url=url,
+            domain=domain_name,
             app_id=app_id,
             rss_url=feed_url,
             icon=icon

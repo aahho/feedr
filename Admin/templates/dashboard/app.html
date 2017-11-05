@@ -4,7 +4,16 @@
 <div class="container-fluid" id="app">
     <div class="card bg-light mb-3">
         <div class="card-header"><h4><strong>{{ app.name }}</strong></h4></div>
+        <div class="card-block" style="padding: 10px 20px 10px 20px;background: white;">
+            <p class="card-text">
+                <span id="token">{{ app.token }}</span>
+                <a class="btn btn-primary copy-btn" data-clipboard-target="#token" style="pointer: cursor;background: #e9ecec;border-color: #e2e0e0;">
+                    <img class="clippy" src="/static/img/clippy.svg" width="15" alt="Copy to clipboard">
+                </a>
+            </p>
+        </div>
     </div>
+
     <form>
         <div class="form-row">
             <div class="col">
@@ -35,7 +44,10 @@
 {% endblock %}
 
 {% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+
 <script>
+
  new Vue({
     el: '#app',
     data: {
@@ -100,5 +112,7 @@
         }
     }
  });
+
+ new Clipboard('.copy-btn');
 </script>
 {% endblock %}

@@ -42,7 +42,6 @@ def get_user_details(token):
     return create_user_data(user_info)
 
 def create_user_data(user_info):
-    print user_info
     if user_info['verified_email'] is not True:
         raise FeedrException('Email is not verified')
     return {

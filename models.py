@@ -18,6 +18,7 @@ class App(db.Model):
     id = db.Column(db.String(100), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     slug = db.Column(db.String(100), nullable=False)
+    token = db.Column(db.String)
     description = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, default=func.now(), onupdate=func.now())
@@ -28,6 +29,7 @@ class App(db.Model):
             'name' : self.name,
             'slug' : self.slug,
             'description' : self.description,
+            'token' : self.token
         }
 
 class Feed(db.Model):
@@ -39,6 +41,7 @@ class Feed(db.Model):
     rss_url = db.Column(db.Text)
     app_id = db.Column(db.ForeignKey(u'apps.id', ondelete=u'CASCADE'), nullable=False)
     icon = db.Column(db.Text)
+    domain=db.Column(db.String(100))
     feed_updated_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
@@ -84,7 +87,8 @@ class FeedArticle(db.Model):
         return (duck_rank / max_rank) * 100
 
     def max_duck_rank(self):
-        return db.session.query(func.max(FeedArticle.duck_rank)).scalar()
+        r = db.session.query(func.max(FeedArticle.duck_rank)).scalar()
+        return r if r else 0
 
     def mini_transformer(self):
         return {
