@@ -18,9 +18,11 @@ def login():
     user = legacy_login_api(data)
     return respondWithItem(user, statusCode=200)
 
-@auth.route('/google', methods=['POST'])
+@auth.route('/users/google', methods=['GET'])
 def google():
-    response = googleLogin()
+    token = request.args.get('token')
+    response = googleLogin(token)
+    return respondWithItem(response, statusCode=200)
     
 @auth.route('/users/logout', methods=['GET'])
 @api_login_required

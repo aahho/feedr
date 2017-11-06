@@ -24,31 +24,6 @@ def legacyLogin(email, password):
 	flash(helpers.error('Invalid credentials'))
 	return redirect('/admin/')
 
-def legacyLoginApi(data):
-	repo = AuthRepository()
-	tokenRepo = UserTokenRepository()
-	userObj = repo.filter_attribute(User, {'email': data['email']})
-	if hasattr(userObj, 'email'):
-		isValid = helpers.validate_hash_password(data['password'], userObj.password)
-		if isValid:
-			token = helpers.access_token()
-			tokenObj = tokenRepo.store(UserToken, 
-				{
-				'token' : token, 
-				'user_id' : userObj.id
-				})
-			return tokenObj.transform()
-	raise FeedrException('Invalid credentials', 422)
-
-def googleLogin(token):
-	pass
-	# social = GoogleSocialAuthentication()
- 	#return social.redirect('user')
-
-def logout(token):
-	tokenRepo = UserTokenRepository()
-	return tokenRepo.deleteToken(UserToken, token)
-
 def logoutUser():
 	tokenRepo = UserTokenRepository()
 	tokenRepo.deleteToken(UserToken, session['token'])

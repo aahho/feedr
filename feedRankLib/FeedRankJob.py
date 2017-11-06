@@ -1,5 +1,6 @@
 from app import app
 from models import *
+import helpers
 import feedparser
 import thread
 from feedRankLib import Article
@@ -45,6 +46,7 @@ class ArticleDetails(threading.Thread):
             article.sentiment = meta['sentiment'] 
 
             newFeedArticleDetail = FeedArticleDetail(
+                id=helpers.generate_unique_code(),
                 title=meta['title'],
                 content=meta['content'],
                 feed_article_id=article.id
@@ -72,6 +74,7 @@ class FeedRankJob:
             existing_article = FeedArticle.query.filter(FeedArticle.url == entry.link).first()
             if existing_article is None :
                 newFeedArticle = FeedArticle(
+                    id=helpers.generate_unique_code(),
                     title=entry.title,
                     url=entry.link,
                     content=entry.summary,

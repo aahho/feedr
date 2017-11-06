@@ -11,12 +11,6 @@ admin = Blueprint('admin', __name__, template_folder='templates')
 def index():
     return render_template('admin_login.html')
 
-@admin.route('/login', methods=['POST'])
-def login():
-    data = request.json
-    user = legacyLoginApi(data)
-    return respondWithItem(user, 200)
-
 @admin.route('/appLogin', methods=['POST'])
 def app_login():
     email = request.form.get('email')
@@ -24,22 +18,10 @@ def app_login():
     user = legacyLogin(email, password)
     return user
 
-@admin.route('/google', methods=['POST'])
-def google():
-    response = googleLogin()
-    
-
 @admin.route('/home', methods=['GET'])
 @login_required
 def home():
     return render_template('dashboard/apps.html', user = session['user'])
-
-@admin.route('/logout', methods=['GET'])
-@api_login_required
-def api_logout():
-    token = request.headers['access-token']
-    response = logout(token)
-    return respondOk('Successfully Logout');
 
 @admin.route('/appLogout', methods=['GET'])
 def appLogout():

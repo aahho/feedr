@@ -13,3 +13,6 @@ newspaper==0.1.0.7
 socialshares==1.1.0
 python-crontab==2.2.6
 numpy==1.13.3
+google-api-python-client==1.6.4
+oauth2client==4.1.2
+PyJWT==1.4.2

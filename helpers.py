@@ -38,7 +38,7 @@ To generate unique code
 uuid package
 '''
 def generate_unique_code():
-    return uuid.uuid4()
+    return uuid.uuid4().__str__()
 
 '''
 error message

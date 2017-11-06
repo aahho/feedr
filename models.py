@@ -8,16 +8,17 @@ from sqlalchemy.dialects.postgresql import ARRAY, array
 from helpers import datetime_to_epoch
 
 feed_article_category_table = db.Table('feed_category', db.Model.metadata,
-    db.Column('feed_id', db.Integer, db.ForeignKey('feeds.id')),
+    db.Column('feed_id', db.String, db.ForeignKey('feeds.id')),
     db.Column('categories', db.Integer, db.ForeignKey('categories.id'))
 )
 
 class App(db.Model):
     __tablename__ = 'apps'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(100), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     slug = db.Column(db.String(100), nullable=False)
+    token = db.Column(db.String)
     description = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, default=func.now(), onupdate=func.now())
@@ -28,17 +29,19 @@ class App(db.Model):
             'name' : self.name,
             'slug' : self.slug,
             'description' : self.description,
+            'token' : self.token
         }
 
 class Feed(db.Model):
     __tablename__= 'feeds'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(100), primary_key=True)
     title = db.Column(db.Text)
     url = db.Column(db.Text)
     rss_url = db.Column(db.Text)
     app_id = db.Column(db.ForeignKey(u'apps.id', ondelete=u'CASCADE'), nullable=False)
     icon = db.Column(db.Text)
+    domain=db.Column(db.String(100))
     feed_updated_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
@@ -59,7 +62,7 @@ class Feed(db.Model):
 class FeedArticle(db.Model):
     __tablename__= 'feed_articles'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(100), primary_key=True)
     title = db.Column(db.Text)
     url = db.Column(db.Text)
     content = db.Column(db.Text)
@@ -82,6 +85,10 @@ class FeedArticle(db.Model):
     def duck_rank_percentile(self, duck_rank):
         max_rank = db.session.query(func.max(FeedArticle.duck_rank)).scalar()
         return (duck_rank / max_rank) * 100
+
+    def max_duck_rank(self):
+        r = db.session.query(func.max(FeedArticle.duck_rank)).scalar()
+        return r if r else 0
 
     def mini_transformer(self):
         return {
@@ -135,7 +142,7 @@ class FeedArticleDetail(db.Model):
     """docstring for FeedArticalDetail"""
     __tablename__= 'feed_article_details'
     
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(100), primary_key=True)
     title = db.Column(db.Text)
     content = db.Column(db.Text)
     rich_rank = db.Column(db.Integer)
