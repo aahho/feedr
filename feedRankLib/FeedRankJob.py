@@ -6,6 +6,8 @@ from feedRankLib import Article
 import threading
 import datetime
 
+from AlexaRankThread import AlexaRankThread
+
 class ArticleDetails(threading.Thread):
     
     def __init__(self, article_id, article_url, published_at):
@@ -36,13 +38,11 @@ class ArticleDetails(threading.Thread):
 
             article = FeedArticle.query.filter_by(id=self.article_id).first()
 
-            article.rank = meta['rank'], 
-            article.share_count = meta['share_count'], 
-            article.keywords = meta['keywords'], 
-            article.image = meta['image'], 
-            article.summary = meta['summary'], 
-            article.duck_rank = meta['duck_rank'], 
-            article.sentiment = meta['sentiment'], 
+            article.share_count = meta['share_count'] 
+            article.keywords = meta['keywords'] 
+            article.image = meta['image'] 
+            article.summary = meta['summary'] 
+            article.sentiment = meta['sentiment'] 
 
             newFeedArticleDetail = FeedArticleDetail(
                 title=meta['title'],
@@ -51,6 +51,8 @@ class ArticleDetails(threading.Thread):
             )
             db.session.add(newFeedArticleDetail)
             db.session.commit()
+
+            AlexaRankThread(self.article_id, self.article_url, meta['article_html'], self.published_at, db).start()
             db.session.close()
 
 class FeedRankJob:
