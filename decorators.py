@@ -35,6 +35,7 @@ def validate_jwt_token(func):
 			payload = jwt.decode(token, 'feed_engine', algorithm='HS256')
 			app = AppRepository().get_by_slug(App, payload['app_name'])
 			if app:
+				request.__setattr__('app', app.transform())
 				return func(*args, **kwargs)
 		raise FeedrException('Unauthorized request', 401)
 	wraps.func_name = func.func_name

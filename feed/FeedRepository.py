@@ -1,5 +1,6 @@
 from models import *
 from sqlalchemy import text
+from sqlalchemy.orm import load_only
 from App.Repository import *
 # from flask.ext.sqlalchemy import get_debug_queries
 
@@ -10,6 +11,14 @@ class FeedRepository():
 
  	def list_feeds(self):
  		return fetchAll(Feed)
+
+ 	def get_id_list(self, filterKeys):
+		feed = filter_attribute(Feed, filterKeys).options(load_only("id")).all()
+		print dir(feed)
+		f_ids = []
+		for feed_id in feed:
+			f_ids.append(feed_id.id)
+		return f_ids
 
  	def getFeedById(self, id):
  		pass

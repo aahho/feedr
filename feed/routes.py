@@ -22,7 +22,8 @@ def delete(feed_id):
 @validate_jwt_token
 def filter():
 	data = request.args
-	response = filter_feed(data)
+	app_id = request.app.get('id')
+	response = filter_feed(data, app_id)
 	return respondWithPaginatedCollection(response, 'mini_transformer')
 
 @feed.route('/feeds/articles/<id>', methods = ['GET'])
