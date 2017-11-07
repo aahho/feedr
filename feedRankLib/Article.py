@@ -11,18 +11,21 @@ class Article:
         self.shares = []
 
     def set_article(self):
-        self.article = newspaper.Article(self.url)
-        self.article.download()
-        self.article.parse()
-        self.article.nlp()  
+        self.article = newspaper.Article(self.url, keep_article_html=True)
+        self.article.build()
+
+    def get_article(self):
+        return self.article
 
     def build_article_meta(self):
         if not self.article.is_valid_body():
             return False
 
         return {
+            'article': self.article,
             'title': self.article.title,
             'content': self.article.text,
+            'article_html': self.article.article_html,
             'image': self.article.top_image,
             'summary': self.article.summary,
             'movies': self.article.movies,
@@ -30,7 +33,7 @@ class Article:
             'authors': self.article.authors,
             'rank': self.calculate_rank(),
             'share_count': self.get_share_count(),
-            'duck_rank' : self.calculate_duck_rank(),
+            'duck_rank' : 1, #self.calculate_duck_rank(),
             'sentiment': self.calculate_sentiment(),
         }
     def get_keywords(self):
@@ -41,7 +44,6 @@ class Article:
         try:
             alexa_data = urllib.urlopen('http://data.alexa.com/data?cli=10&dat=s&url=%s'%self.url).read()
             return int(re.search(r'<REACH[^>]*RANK="(\d+)"', alexa_data).groups()[0])
-            return int(re.search(r'<POPULARITY[^>]*TEXT="(\d+)"', alexa_data).groups()[0])
 
         except:
             return -1    

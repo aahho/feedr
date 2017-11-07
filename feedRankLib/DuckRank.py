@@ -10,9 +10,9 @@ class DuckRank:
     DEVIANCE = 0.85
     GRAVITY_CONST = 1.8
 
-    def __init__(self, url, article, alexa_rank, published_at):
+    def __init__(self, url, article_html, alexa_rank, published_at):
         self.url = url
-        self.article = article
+        self.article_html = article_html
         self.alexa_rank = alexa_rank  
         self.published_at = published_at
         self.shares = {}
@@ -41,7 +41,7 @@ class DuckRank:
 
     # no. of outgoing links in the article
     def set_cr(self):
-        self.cr = self.start_link = self.article.text.find("a href")
+        self.cr = self.start_link = self.article_html.find("a href")
 
     '''
     algo for duck rank calculation
