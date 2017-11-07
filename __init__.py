@@ -12,11 +12,13 @@ from Http.routes import base
 from Admin.routes import admin
 from Auth.routes import auth
 from feed.routes import feed
+from feedAction.routes import feed_action
 from worker.routes import worker
 
 app.register_blueprint(base)
 app.register_blueprint(admin, url_prefix = '/admin')
 app.register_blueprint(feed)
+app.register_blueprint(feed_action)
 app.register_blueprint(auth)
 app.register_blueprint(worker)
 

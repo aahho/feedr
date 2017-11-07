@@ -1,11 +1,18 @@
 from flask import Flask, json, jsonify
 from datetime import datetime, timedelta
 from __init__ import db
-from sqlalchemy import text
+from sqlalchemy import text, UniqueConstraint
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.postgresql import ARRAY, array
 from helpers import datetime_to_epoch
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.associationproxy import association_proxy
+
+# ALDJEMY_DATA_TYPES = {
+#     'UUIDField': lambda field: UUID(),
+#     'StringField': lambda field: str()
+# }
 
 feed_article_category_table = db.Table('feed_category', db.Model.metadata,
     db.Column('feed_id', db.String, db.ForeignKey('feeds.id')),
@@ -81,6 +88,9 @@ class FeedArticle(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
 
     article_details = relationship(u'FeedArticleDetail', uselist=False, back_populates="feed_article")
+    # article_users = relationship("UserArticle", back_populates="user_articles")
+    users = relationship("UserArticle", back_populates="articles")
+    
 
     def duck_rank_percentile(self, duck_rank):
         max_rank = db.session.query(func.max(FeedArticle.duck_rank)).scalar()
@@ -89,6 +99,14 @@ class FeedArticle(db.Model):
     def max_duck_rank(self):
         r = db.session.query(func.max(FeedArticle.duck_rank)).scalar()
         return r if r else 0
+
+    def minimal_transformer(self):
+        return {
+            'id' : self.id,
+            'title' : self.title,
+            'duckRank' : self.duck_rank_percentile(self.duck_rank),
+            'publishedAt' : datetime_to_epoch(self.published_at),
+        }
 
     def mini_transformer(self):
         return {
@@ -185,6 +203,15 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=func.now(), onupdate=func.now())
     slack_id = db.Column(db.String(30))
     logo = db.Column(db.Text)
+    is_premium_user = db.Column(db.Boolean, server_default=text("false"))
+
+    articles = relationship("UserArticle", back_populates="users")
+
+    def transformed_articles(self):
+        user_articles = []
+        for article in self.articles:
+            user_articles.append(article.article_transformer())
+        return user_articles
 
     def transform(self):
         return {
@@ -193,6 +220,8 @@ class User(db.Model):
             'email' : self.email,
             'isGod' : self.is_god,
             'isBanned' : self.is_banned,
+            'isPremiumUser' : bool(self.is_premium_user),
+            'articles' : self.transformed_articles(),
             # 'lastLoginLocation' : self.last_login_location
         }
 
@@ -233,6 +262,28 @@ class UserToken(db.Model):
         return {
             'id' : self.id,
             'token' : self.token,
-            'expiresAt' : self.expires_at,
+            'expiresAt' : datetime_to_epoch(self.expires_at),
             'user' : self.user.transform()
+        }
+
+class UserArticle(db.Model):
+    """docstring for UserArticle"""
+    __tablename__ = 'user_articles'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String, db.ForeignKey(u'users.id'))
+    feed_article_id = db.Column(db.String, db.ForeignKey(u'feed_articles.id'))
+    saved_at = db.Column(db.DateTime)
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "feed_article_id"),
+    )
+
+    users = relationship('User',  back_populates='articles')
+    articles = relationship('FeedArticle', back_populates='users')
+
+    def article_transformer(self):
+        return {
+            'savedAt' : datetime_to_epoch(self.saved_at),
+            'article' : self.articles.minimal_transformer()
         }
