@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, flash, url_for, session
 from models import User, UserToken, UserDetail
 from Exceptions.ExceptionHandler import FeedrException
 from Auth.AuthRepository import AuthRepository, UserTokenRepository, UserDetailsRepository
-import helpers, datetime
+import helpers, datetime, models
 from Auth.AuthValidator import create_user_rule
 from wrapper import GoogleAuthentication
 
@@ -48,22 +48,23 @@ def legacy_login_api(data):
 def googleLogin(token):
 	# GoogleAuthentication.authenticate_token(token)
 	user_info = GoogleAuthentication.get_user_details(token)
-	repo = AuthRepository().filter_attribute(user_info['email'])
-	if repo is None:
+	user = AuthRepository().filter_attribute(models.User, user_info['email'])
+	if user is None:
 		data = {
 			'email' : user_info['email'],
 			'password' : None,
 			'displayName' : user_info['display_name'],
 			'firstName' : user_info['first_name'],
 			'last_Name' : user_info['last_name'],
-			'is_password_change_required' : user_info['is_password_change_required']
+			'is_password_change_required' : False
 		}
-		create_user(data)
+		user = create_user(data)
 	user_token = helpers.access_token()
+	tokenRepo = UserTokenRepository()
 	return tokenRepo.store(UserToken, 
 		{
 		'token' : user_token, 
-		'user_id' : userObj.id
+		'user_id' : user.id
 		})
 	# return user_info
 	# social = GoogleSocialAuthentication()

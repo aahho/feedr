@@ -14,7 +14,7 @@ class FeedrException(Exception):
         rv['data'] = []
         rv['code'] = self.status_code
         rv['notification'] = {
-            'seCode' : 'SE_'+str(self.status_code),
+            'feedCode' : 'FEEDR_'+str(self.status_code),
             'message' : self.message,
             'hint' : self.hint,
             'type' : 'error'
