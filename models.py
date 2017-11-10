@@ -49,6 +49,7 @@ class Feed(db.Model):
     app_id = db.Column(db.ForeignKey(u'apps.id', ondelete=u'CASCADE'), nullable=False)
     icon = db.Column(db.Text)
     domain=db.Column(db.String(100))
+    alexa_rank=db.Column(db.Integer)
     feed_updated_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     updated_at = db.Column(db.DateTime, nullable=False, onupdate=func.now(), default=func.now())
@@ -64,6 +65,7 @@ class Feed(db.Model):
             'title' : self.title,
             'url' : self.rss_url,
             'icon' : self.icon,
+            'alexa_rank' : self.alexa_rank,
         }
 
 class FeedArticle(db.Model):

@@ -19,6 +19,8 @@ def get_keywords():
 	if request.method == 'GET':
 		return respondWithArray(get_keyword_list())
 
-@feed.route('/feeds/<feed_id>', methods = ["DELETE"])
+@feed.route('/feeds/<feed_id>', methods = ["DELETE", "PUT"])
 def delete(feed_id):
-    return destroy(feed_id)
+	if request.method == 'PUT':
+		return update(feed_id, request)
+	return destroy(feed_id)

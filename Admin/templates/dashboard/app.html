@@ -31,12 +31,19 @@
     <table class="table" v-if="feeds.length > 0">
         <thead >
             <th>Url</th>
-            <th></th>
+            <th>Alexa Rank</th>
+            <th>Action</th>
         </thead>
         <tbody>
             <tr v-for="feed in feeds">
-                <td><a href="[[ feed.url ]]">[[ feed.url ]]</a></td>
-                <td><button class="btn btn-sm btn-danger" @click="deleteFeed(feed)">Delete</button></td>
+                <td><a v-bind:href="[[ feed.url ]]">[[ feed.url ]]</a></td>
+                <td>
+                    <input type="text" class="form-control input-sm" v-model="feed.alexa_rank"></input>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-success" @click.prevent="updateAlexaRank(feed)">Save</button>
+                    <button class="btn btn-sm btn-danger" @click="deleteFeed(feed)">Delete</button>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -54,7 +61,8 @@
         app_id: '{{ app.id }}',
         feeds: [],
         feed_url: '',
-        error: ''
+        error: '',
+        alexa_rank : '',
     },
     delimiters: ['[[', ']]'],
     mounted: function () {
@@ -109,7 +117,24 @@
                 .catch(function (error) {
                     console.log(error);
                 });
-        }
+        },
+
+        updateAlexaRank: function(feed) {
+            const vm = this;
+            vm.error = '';
+
+            axios.put('/feeds/'+ feed.id, {
+                alexa_rank: feed.alexa_rank
+            })
+                .then(function (response) {
+                    if (response.data.error) {
+                        vm.error = response.data.error;
+                    } 
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
     }
  });
 

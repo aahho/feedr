@@ -11,15 +11,16 @@ from AlexaRankThread import AlexaRankThread
 
 class ArticleDetails(threading.Thread):
     
-    def __init__(self, article_id, article_url, published_at):
+    def __init__(self, article_id, article_url, published_at, alexa_rank):
         threading.Thread.__init__(self)        
         self.article_id = article_id
+        self.alexa_rank = alexa_rank
         self.article_url = article_url
         self.published_at = published_at
 
     def run(self):
         with app.app_context():
-            articleDetails = Article(self.article_url, self.published_at)
+            articleDetails = Article(self.article_url, self.published_at, self.alexa_rank)
             details_exists = FeedArticleDetail.query.filter_by(feed_article_id=self.article_id).first()
             if details_exists:
                 return
@@ -54,7 +55,7 @@ class ArticleDetails(threading.Thread):
             db.session.add(newFeedArticleDetail)
             db.session.commit()
 
-            AlexaRankThread(self.article_id, self.article_url, meta['article_html'], self.published_at, db).start()
+            AlexaRankThread(self.article_id, self.article_url, meta['article_html'], self.published_at, self.alexa_rank, db).start()
             db.session.close()
 
 class FeedRankJob:
@@ -87,7 +88,7 @@ class FeedRankJob:
             else :
                 newFeedArticle = existing_article
 
-            threads.append(ArticleDetails(newFeedArticle.id, newFeedArticle.url, newFeedArticle.published_at))
+            threads.append(ArticleDetails(newFeedArticle.id, newFeedArticle.url, newFeedArticle.published_at, feed.alexa_rank))
 
         for t in threads:
             t.start()

@@ -61,6 +61,5 @@ def delete(app_id):
 @admin.route('/api/apps/<app_id>/feeds', methods=['GET'])
 @login_required
 def get_app_feeds(app_id):
-    print respondWithCollection(AppController.get_app_feeds(app_id))
     return respondWithCollection(AppController.get_app_feeds(app_id))
     

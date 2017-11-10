@@ -3,6 +3,7 @@ from models import *
 import helpers, jwt
 from slugify import slugify
 from Admin.AppRepository import AppRepository
+from sqlalchemy import desc
 
 def index():
     return render_template('dashboard/apps.html', apps=App.query.all())
@@ -52,4 +53,4 @@ def delete_app(app_id):
     return redirect('admin/apps')
 
 def get_app_feeds(app_id):
-    return Feed.query.filter(Feed.app_id == app_id).all()
+    return Feed.query.filter(Feed.app_id == app_id).order_by(desc(Feed.created_at)).all()

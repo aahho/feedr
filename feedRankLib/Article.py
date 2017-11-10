@@ -4,8 +4,9 @@ import socialshares
 from DuckRank import DuckRank
 
 class Article:
-    def __init__(self, url, published_at):
+    def __init__(self, url, published_at, alexa_rank):
         self.url = url
+        self.alexa_rank = alexa_rank
         self.published_at = published_at
         self.set_article()   
         self.shares = []
@@ -31,7 +32,7 @@ class Article:
             'movies': self.article.movies,
             'keywords': self.get_keywords(),
             'authors': self.article.authors,
-            'rank': self.calculate_rank(),
+            'rank': self.alexa_rank,
             'share_count': self.get_share_count(),
             'duck_rank' : 1, #self.calculate_duck_rank(),
             'sentiment': self.calculate_sentiment(),
