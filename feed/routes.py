@@ -14,6 +14,11 @@ def index():
 	if request.method == 'POST':
 		return store(request)
 
+@feed.route('/feeds/keywords', methods = ["GET"])
+def get_keywords():
+	if request.method == 'GET':
+		return respondWithArray(get_keyword_list())
+
 @feed.route('/feeds/<feed_id>', methods = ["DELETE"])
 def delete(feed_id):
     return destroy(feed_id)
