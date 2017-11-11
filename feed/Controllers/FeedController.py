@@ -53,7 +53,7 @@ def store(request):
         icon=icon
     )
     db.session.add(newFeed)
-    if category is not None:
+    if category:
         category_data = add_or_fetch_category(category)
         newFeed.categories.append(category_data)
     db.session.commit()

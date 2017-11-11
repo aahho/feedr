@@ -41,7 +41,9 @@
         <tbody>
             <tr v-for="feed in feeds">
                 <td><a v-bind:href="[[ feed.url ]]">[[ feed.url ]]</a></td>
-                <td><p>[[ feed.category[0]['name'] ]]</p></td>
+                    <td>
+                        <p v-if="feed.category.length > 0">[[ feed.category[0]['name'] ]]</p>
+                    </td>
                 <td>
                     <input type="text" class="form-control input-sm" v-model="feed.alexa_rank"></input>
                 </td>
