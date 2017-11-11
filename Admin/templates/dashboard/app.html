@@ -16,13 +16,16 @@
 
     <form>
         <div class="form-row">
-            <div class="col">
+            <div class="col-lg">
                 <input type="url" class="form-control" placeholder="Feed URL" v-model="feed_url">
                 <small class="form-text text-danger" v-if="error">
                     [[ error ]]
                 </small>
             </div>
-            <div class="col">
+            <div class="col-md">
+                <input type="url" class="form-control" placeholder="Feed Category" v-model="feed_category">
+            </div>
+            <div class="col-sm">
                 <button type="submit" class="btn btn-md btn-success" @click.prevent="addNewFeed">Add</button>
             </div>
         </div>
@@ -31,12 +34,14 @@
     <table class="table" v-if="feeds.length > 0">
         <thead >
             <th>Url</th>
+            <th>Category</th>
             <th>Alexa Rank</th>
             <th>Action</th>
         </thead>
         <tbody>
             <tr v-for="feed in feeds">
                 <td><a v-bind:href="[[ feed.url ]]">[[ feed.url ]]</a></td>
+                <td><p>[[ feed.category[0]['name'] ]]</p></td>
                 <td>
                     <input type="text" class="form-control input-sm" v-model="feed.alexa_rank"></input>
                 </td>
@@ -63,6 +68,7 @@
         feed_url: '',
         error: '',
         alexa_rank : '',
+        feed_category : ''
     },
     delimiters: ['[[', ']]'],
     mounted: function () {
@@ -86,6 +92,7 @@
             vm.error = '';
             axios.post('/feeds', {
                 url: this.feed_url,
+                category: this.feed_category,
                 app_id: this.app_id,
             })
                 .then(function (response) {

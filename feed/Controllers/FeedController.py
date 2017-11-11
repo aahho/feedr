@@ -16,8 +16,11 @@ def get_article_data(id):
 
 def store(request):
     url = request.json.get('url')
-    # tags = request.json.getlist('tags')
+    category = request.json.get('category')
     app_id = request.json.get('app_id')
+    existing_feed = Feed.query.filter(Feed.url.ilike(r"%{}%".format(url))).first()
+    if existing_feed:
+        return jsonify({'error' : 'Feed already added.'})
     url = url.strip()
     feed = feedparser.parse(url)
     if not feed.entries:
@@ -30,33 +33,46 @@ def store(request):
     else : 
         feed_url = url
 
-    existing_feed = Feed.query.filter(Feed.url.ilike(r"%{}%".format(url))).first()
-    if not existing_feed:
-        title = feed.feed.title
-        if 'icon' in feed.feed:
-            icon = feed.feed.icon
-        elif 'image' in feed.feed:
-            icon = feed.feed.image.href
-        else :
-            icon = None
-        ext = tldextract.extract(url)
-        domain_name = ext.domain + '.' + ext.suffix
-        newFeed = Feed(
-            id=helpers.generate_unique_code(),
-            title=title,
-            url=url,
-            alexa_rank = get_alexa_rank(domain_name),
-            domain=domain_name,
-            app_id=app_id,
-            rss_url=feed_url,
-            icon=icon
-        )
-        db.session.add(newFeed)
-        db.session.commit()
+    title = feed.feed.title
+    if 'icon' in feed.feed:
+        icon = feed.feed.icon
+    elif 'image' in feed.feed:
+        icon = feed.feed.image.href
+    else :
+        icon = None
+    ext = tldextract.extract(url)
+    domain_name = ext.domain + '.' + ext.suffix
+    newFeed = Feed(
+        id=helpers.generate_unique_code(),
+        title=title,
+        url=url,
+        alexa_rank = get_alexa_rank(domain_name),
+        domain=domain_name,
+        app_id=app_id,
+        rss_url=feed_url,
+        icon=icon
+    )
+    db.session.add(newFeed)
+    if category is not None:
+        category_data = add_or_fetch_category(category)
+        newFeed.categories.append(category_data)
+    db.session.commit()
 
-        return respondWithItem(newFeed)
+    return respondWithItem(newFeed)
 
-    return jsonify({'error' : 'Feed already added.'})
+
+def add_or_fetch_category(category_name):
+    slug = slugify(category_name)
+    category = Category.query.filter(Category.slug == slug).first()
+    if category:
+        return category
+    new_category = Category(
+        name=category_name,
+        slug=slug
+    )
+    db.session.add(new_category)
+    db.session.commit()
+    return new_category
 
 def get_alexa_rank(url):
     try:

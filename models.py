@@ -58,6 +58,12 @@ class Feed(db.Model):
         "Category",
         secondary=feed_article_category_table,
         back_populates="feeds")
+    
+    def category_list(self, categories):
+        dic = []
+        for category in categories:
+            dic.append(category.transform())
+        return dic
 
     def transform(self):
         return {
@@ -65,6 +71,7 @@ class Feed(db.Model):
             'title' : self.title,
             'url' : self.rss_url,
             'icon' : self.icon,
+            'category' : self.category_list(self.categories),
             'alexa_rank' : self.alexa_rank,
         }
 
@@ -157,6 +164,12 @@ class Category(db.Model):
         "Feed",
         secondary=feed_article_category_table,
         back_populates="categories")
+
+    def transform(self):
+        return {
+            'name' : self.name,
+            'slug' : self.slug,
+        }
 
 class FeedArticleDetail(db.Model):
     """docstring for FeedArticalDetail"""
