@@ -24,7 +24,7 @@ def get_categories():
 	if request.method == 'GET':
 		response = get_categories_list()
 		if response:
-			return respondWithArray(response)
+			return respondWithCollection(response)
 		raise FeedrException('failed to fetch')
 
 @feed.route('/feeds/categories/<cat_id>', methods = ["GET"])

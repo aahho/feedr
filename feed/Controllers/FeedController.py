@@ -92,11 +92,11 @@ def get_keyword_list():
     return list(set(key_list))
 
 def get_categories_list():
-    categories = Category.query.options(load_only('name')).all()
-    category_list = []
-    for category in categories:
-        category_list.append(category.name)
-    return category_list
+    return Category.query.all()
+    # category_list = []
+    # for category in categories:
+    #     category_list.append(category.name)
+    # return category_list
 
 def get_categories_by_id(cat_id):
     return Category.query.filter(Category.id == cat_id).first()

@@ -53,7 +53,7 @@ def filter_feed(data, app_id):
     if 'sort' in data:
         column = data['sort'].split('.')[0]
         order = data['sort'].split('.')[1]
-        query = query.order_by(getattr(getattr(modelName, column), order))
+        query = query.order_by(getattr(getattr(FeedArticle, column), order)())
     else:
         query = query.order_by(desc(FeedArticle.published_at))
 
