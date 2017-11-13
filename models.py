@@ -149,7 +149,7 @@ class FeedArticle(db.Model):
             'image' : self.image,
             'summary' : self.summary,
             'sentiment' : self.sentiment,
-            'category' : self.category,
+            'category' : self.category(),
             'feedId' : self.feed_id,
             'duckRank' : self.duck_rank_percentile(self.duck_rank),
             'shareCount' : self.share_count,
