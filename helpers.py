@@ -1,6 +1,7 @@
 from flask import Flask, request, url_for
 import bcrypt, uuid, random, requests
 import datetime, time
+from __init__ import app
 
 
 def datetime_to_epoch(date):
