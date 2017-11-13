@@ -14,7 +14,6 @@ class FeedRepository():
 
  	def get_id_list(self, filterKeys):
 		feed = filter_attribute(Feed, filterKeys).options(load_only("id")).all()
-		print dir(feed)
 		f_ids = []
 		for feed_id in feed:
 			f_ids.append(feed_id.id)

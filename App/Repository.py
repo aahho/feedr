@@ -16,7 +16,6 @@ def filterByAttributePaginated(modelName, filterKeys={}, expressions=None, item=
 		orderBy.append(getattr(getattr(modelName, column), order)())
 
 	if expressions is not None:
-		print expressions
 		return modelName.query.filter(expressions['query']).filter_by(**filterKeys).order_by(*orderBy).paginate(page=int(page), per_page=int(item), error_out=False)
 	return modelName.query.filter_by(**filterKeys).order_by(*orderBy).paginate(page=int(page), per_page=int(item), error_out=False)
 

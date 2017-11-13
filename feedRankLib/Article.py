@@ -1,6 +1,6 @@
 from textblob import TextBlob
 import newspaper, urllib, re
-import socialshares
+import socialshares, time
 from DuckRank import DuckRank
 
 class Article:
@@ -8,12 +8,21 @@ class Article:
         self.url = url
         self.alexa_rank = alexa_rank
         self.published_at = published_at
-        self.set_article()   
+        # self.set_article()   
         self.shares = []
 
     def set_article(self):
-        self.article = newspaper.Article(self.url, keep_article_html=True)
-        self.article.build()
+        try:
+            self.article = newspaper.Article(self.url, keep_article_html=True)
+        except Exception as e:
+            print e.message
+
+        self.article.download()
+        self.article.parse()
+        if not self.article.is_parsed:
+            time.sleep(1)
+        self.article.nlp()
+        # self.article.build()
 
     def get_article(self):
         return self.article

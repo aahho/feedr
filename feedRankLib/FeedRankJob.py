@@ -21,6 +21,7 @@ class ArticleDetails(threading.Thread):
     def run(self):
         with app.app_context():
             articleDetails = Article(self.article_url, self.published_at, self.alexa_rank)
+            articleDetails.set_article()
             details_exists = FeedArticleDetail.query.filter_by(feed_article_id=self.article_id).first()
             if details_exists:
                 return
@@ -29,8 +30,9 @@ class ArticleDetails(threading.Thread):
                 meta = articleDetails.build_article_meta()
                 if not meta:
                     article_to_be_deleted = FeedArticle.query.filter(FeedArticle.id == self.article_id).first()
-                    db.session.delete(article_to_be_deleted)
-                    db.session.commit()
+                    if article_to_be_deleted:
+                        db.session.delete(article_to_be_deleted)
+                        db.session.commit()
                     return
             except:
                 article_to_be_deleted = FeedArticle.query.filter(FeedArticle.id == self.article_id).first()

@@ -41,6 +41,14 @@ def generate_unique_code():
     return uuid.uuid4().__str__()
 
 '''
+get respective api server url
+'''
+def get_local_server_url():
+    if app.config['APP_ENV'] == 'production':
+        return "http://139.59.4.41"
+    return "http://localhost:5000"
+    
+'''
 error message
 '''
 def error(message):

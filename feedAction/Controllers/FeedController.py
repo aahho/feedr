@@ -13,6 +13,16 @@ def filter_feed(data, app_id):
     feed_ids = FeedRepository().get_id_list({'app_id' : app_id})
     query = query.filter(FeedArticle.feed_id.in_(feed_ids))
 
+    if 'category_id' in data:
+        cat_feed_ids = []
+        category_id = data['category_id'].split(',')
+        categories = Category.query.filter(Category.id.in_(category_id)).all()
+        for cat in categories:
+            feeds = cat.feeds
+            for feed in feeds:
+                cat_feed_ids.append(feed.id)
+        query = query.filter(FeedArticle.feed_id.in_(cat_feed_ids))
+
     if 'domain' in data:
         feed_ids = Feed.query.filter(Feed.domain.ilike('%'+data['domain']+"%")).options(load_only('id')).all()
         f_ids = []

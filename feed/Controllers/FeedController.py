@@ -91,6 +91,17 @@ def get_keyword_list():
             key_list.extend(keyword.keywords.split(','))
     return list(set(key_list))
 
+def get_categories_list():
+    categories = Category.query.options(load_only('name')).all()
+    category_list = []
+    for category in categories:
+        category_list.append(category.name)
+    return category_list
+
+def get_categories_by_id(cat_id):
+    return Category.query.filter(Category.id == cat_id).first()
+
+
 def update(feed_id, request):
     feed = Feed.query.filter(Feed.id==feed_id).first()
     if feed:

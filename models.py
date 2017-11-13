@@ -99,11 +99,16 @@ class FeedArticle(db.Model):
     article_details = relationship(u'FeedArticleDetail', uselist=False, back_populates="feed_article")
     # article_users = relationship("UserArticle", back_populates="user_articles")
     users = relationship("UserArticle", back_populates="articles")
-    
+    feed = relationship("Feed")
+
+    def category(self):
+        return self.feed.transform()['category'][0]['name'] if len(self.feed.transform()['category']) > 0 else None
 
     def duck_rank_percentile(self, duck_rank):
+        if not duck_rank : 
+            duck_rank = 0
         max_rank = db.session.query(func.max(FeedArticle.duck_rank)).scalar()
-        return (duck_rank / max_rank) * 100
+        return (float(duck_rank) / max_rank) * 100
 
     def max_duck_rank(self):
         r = db.session.query(func.max(FeedArticle.duck_rank)).scalar()
@@ -126,6 +131,7 @@ class FeedArticle(db.Model):
             'duckRank' : self.duck_rank_percentile(self.duck_rank),
             'shareCount' : self.share_count,
             'image' : self.image,
+            'category' : self.category(),
             'keywords' : self.keywords.split(',') if self.keywords is not None else [],
             'publishedAt' : datetime_to_epoch(self.published_at),
             'updatedAt' : datetime_to_epoch(self.updated_at)
@@ -143,6 +149,7 @@ class FeedArticle(db.Model):
             'image' : self.image,
             'summary' : self.summary,
             'sentiment' : self.sentiment,
+            'category' : self.category,
             'feedId' : self.feed_id,
             'duckRank' : self.duck_rank_percentile(self.duck_rank),
             'shareCount' : self.share_count,
@@ -167,6 +174,7 @@ class Category(db.Model):
 
     def transform(self):
         return {
+            'id' : self.id,
             'name' : self.name,
             'slug' : self.slug,
         }

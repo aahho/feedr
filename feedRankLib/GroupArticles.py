@@ -24,7 +24,6 @@ def group_articles():
 def group_content(art, art1):
 	similarity = check_similarity(art.content, art1.content, True)
 	
-	print similarity
 
 def check_similarity(text1, text2, info_content_norm=True):
 	return similarity(text1, text2, True)
