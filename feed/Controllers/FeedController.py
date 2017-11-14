@@ -8,6 +8,7 @@ from sqlalchemy.orm import load_only
 from sqlalchemy import text, or_, desc
 from feed.FeedRepository import FeedRepository, FeedArticleRepository
 from app import app
+from sqlalchemy.sql import func
 import helpers, datetime, tldextract, thread, feedparser, newspaper, urllib, re
 
 def get_article_data(id):
@@ -118,4 +119,8 @@ def destroy(feed_id):
         return jsonify({'success': 'Deleted'})
     return jsonify({'error' : 'Failed to delete feed.'})
 
+def fetch_latest_news():
+    return FeedArticle.query.\
+        filter(FeedArticle.published_at > datetime.datetime.now().date()).\
+        order_by(desc(FeedArticle.duck_rank)).first()
 

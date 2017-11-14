@@ -38,3 +38,11 @@ def delete(feed_id):
 	if request.method == 'PUT':
 		return update(feed_id, request)
 	return destroy(feed_id)
+
+@feed.route('/latestNews', methods = ['GET'])
+def get_latest_news():
+	response = fetch_latest_news()
+	if response:
+		return respondWithItem(response, 'notification_transformer')
+	raise FeedrException('No Letest news')
+		

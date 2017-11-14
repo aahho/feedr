@@ -122,6 +122,13 @@ class FeedArticle(db.Model):
             'publishedAt' : datetime_to_epoch(self.published_at),
         }
 
+    def notification_transformer(self):
+        return {
+            'id' : self.id,
+            'title' : self.title,
+            'summary' : self.summary,
+        }
+
     def mini_transformer(self):
         return {
             'id' : self.id,
