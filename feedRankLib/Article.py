@@ -18,6 +18,8 @@ class Article:
             print e.message
 
         self.article.download()
+        if not self.article.is_downloaded:
+            time.sleep(1)
         self.article.parse()
         if not self.article.is_parsed:
             time.sleep(1)

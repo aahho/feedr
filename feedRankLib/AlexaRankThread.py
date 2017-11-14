@@ -1,7 +1,7 @@
 import threading
 from Article import Article
 from app import app
-from models import FeedArticle
+from models import FeedArticle, db
 from DuckRankThread import DuckRankThread
 
 class AlexaRankThread(threading.Thread):
@@ -21,5 +21,8 @@ class AlexaRankThread(threading.Thread):
             if feed_article:
                 feed_article.rank = self.alexa_rank
                 self.db.session.commit()
-
-                DuckRankThread(self.article_id, self.url, self.article_html, self.alexa_rank, self.published_at, self.db).start()
+                try :
+                    DuckRankThread(self.article_id, self.url, self.article_html, self.alexa_rank, self.published_at, self.db).start()
+                except Exception as error:
+                    db.session.delete(feed_article)
+                    db.session.commit()
