@@ -6,3 +6,4 @@ env.py
 venv/
 node_modules/
 .vscode/
+package-lock.json
